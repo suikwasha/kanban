@@ -21,7 +21,14 @@ class PasswordInfoRepository @Inject()(val dbConfigProvider: DatabaseConfigProvi
       .map(_.map(p => PasswordInfo(p.hasher, p.hash, p.salt)))
   }
 
-  override def add(loginInfo: LoginInfo, authInfo: PasswordInfo): Future[PasswordInfo] = ???
+  override def add(loginInfo: LoginInfo, authInfo: PasswordInfo): Future[PasswordInfo] = db.run {
+    TableQuery[Passwords] += Password(
+      key = loginInfo.providerKey,
+      hasher = authInfo.hasher,
+      hash = authInfo.password,
+      salt = authInfo.salt
+    )
+  }.map(_ => authInfo)
 
   override def update(loginInfo: LoginInfo, authInfo: PasswordInfo): Future[PasswordInfo] = ???
 

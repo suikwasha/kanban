@@ -7,9 +7,9 @@ case class User(id: Int, name: String, providerId: String, providerKey: String) 
 
 class Users(tag: Tag) extends Table[User](tag, "USER") {
 
-  def id = column[Int]("ID")
+  def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
 
-  def name = column[String]("NAME")
+  def name = column[String]("NAME", O.Unique)
 
   def providerId = column[String]("PROVIDER_ID")
 

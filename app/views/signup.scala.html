@@ -1,0 +1,12 @@
+@(signUpForm: Form[controllers.SignUpForm])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+    @import helper._
+
+@main("Sign In") {
+    <div>
+    @form(action = routes.SignUpController.post()) {
+        @helper.inputText(signUpForm("name"))
+        @helper.inputText(signUpForm("password"))
+        <button id="submit" type="submit" value="submit">Submit</button>
+    }
+    </div>
+}
