@@ -2,7 +2,8 @@ package controllers
 
 import com.mohiva.play.silhouette.api.{HandlerResult, Silhouette}
 import javax.inject._
-import models.shilhouette.UserEnv
+import models.shilhouette.{User, UserEnv}
+import models.task.TaskService
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -10,7 +11,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class HomeController @Inject()(
   cc: ControllerComponents,
-  silhouette: Silhouette[UserEnv]
+  silhouette: Silhouette[UserEnv],
+  taskService: TaskService
 )(
   implicit ec: ExecutionContext
 ) extends AbstractController(cc) {
@@ -18,10 +20,18 @@ class HomeController @Inject()(
   def index() = Action.async { implicit request =>
     silhouette.UserAwareRequestHandler { userAwareRequest =>
       Future.successful(HandlerResult(Ok, userAwareRequest.identity))
-    }.map {
-      case HandlerResult(_, Some(user)) => Ok(views.html.index(user.name))
-      case HandlerResult(_, None) => Redirect(routes.SignInController.get)
+    }.flatMap {
+      case HandlerResult(_, Some(user)) => showTasks(user)
+      case HandlerResult(_, None) => Future.successful(Redirect(routes.SignInController.get()))
     }
 
+  }
+
+  private[this] def showTasks(user: User)(implicit request: Request[AnyContent]): Future[Result] = {
+    for {
+      tasks <- taskService.findTasks(user.id)
+    } yield {
+      Ok(views.html.task.list(tasks))
+    }
   }
 }

@@ -31,7 +31,6 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
     bind[EventBus].toInstance(EventBus())
     bind[FingerprintGenerator].toInstance(new DefaultFingerprintGenerator(false))
     bind[IDGenerator].toInstance(new SecureRandomIDGenerator())
-    bind[UserRepository].to[UserRepository]
   }
 
   @Provides
