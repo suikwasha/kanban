@@ -76,7 +76,7 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
       cookieName = "id",
       cookiePath = "/",
       cookieDomain = None,
-      secureCookie = true,
+      secureCookie = false,
       httpOnlyCookie = true,
       useFingerprinting = true,
       cookieMaxAge = None,

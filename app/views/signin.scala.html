@@ -1,0 +1,15 @@
+@(signInForm: Form[SignInForm])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+    @import helper._
+
+@main("Sign In") {
+
+
+    <h1>Sign In</h1>
+    <div>
+        @form(action = routes.SignInController.post) {
+            @helper.inputText(signInForm("name"))
+            @helper.inputPassword(signInForm("password"))
+            <button type="submit" value="submit">Sign In</button>
+        }
+    </div>
+}

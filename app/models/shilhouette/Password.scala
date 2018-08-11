@@ -8,7 +8,7 @@ class Passwords(tag: Tag) extends Table[Password](tag, "PASSWORD") {
 
   def key = column[String]("PROVIDER_KEY", O.PrimaryKey)
 
-  def hasher = column[String]("HAHSER")
+  def hasher = column[String]("HASHER")
 
   def hash = column[String]("HASH")
 

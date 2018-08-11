@@ -1,24 +1,27 @@
 package controllers
 
+import com.mohiva.play.silhouette.api.{HandlerResult, Silhouette}
 import javax.inject._
-import play.api._
+import models.shilhouette.UserEnv
 import play.api.mvc._
 
-/**
- * This controller creates an `Action` to handle HTTP requests to the
- * application's home page.
- */
-@Singleton
-class HomeController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+import scala.concurrent.{ExecutionContext, Future}
 
-  /**
-   * Create an Action to render an HTML page.
-   *
-   * The configuration in the `routes` file means that this method
-   * will be called when the application receives a `GET` request with
-   * a path of `/`.
-   */
-  def index() = Action { implicit request: Request[AnyContent] =>
-    Ok(views.html.index())
+@Singleton
+class HomeController @Inject()(
+  cc: ControllerComponents,
+  silhouette: Silhouette[UserEnv]
+)(
+  implicit ec: ExecutionContext
+) extends AbstractController(cc) {
+
+  def index() = Action.async { implicit request =>
+    silhouette.UserAwareRequestHandler { userAwareRequest =>
+      Future.successful(HandlerResult(Ok, userAwareRequest.identity))
+    }.map {
+      case HandlerResult(_, Some(user)) => Ok(views.html.index(user.name))
+      case HandlerResult(_, None) => Redirect(routes.SignInController.get)
+    }
+
   }
 }
