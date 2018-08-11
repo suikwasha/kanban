@@ -43,6 +43,10 @@ class TaskRepository @Inject()(
       .result
   }.map(_.map(_.toTask))
 
+  def find(taskId: TaskId): Future[Option[Task]] = db.run {
+    TableQuery[Tasks].filter(t => t.id === taskId.value).result.headOption
+  }.map(_.map(_.toTask))
+
   def create(author: UserId, title: String, description: String, state: State): Future[Task] = db.run {
     val tasks = TableQuery[Tasks]
     val insert = tasks.returning(tasks.map(_.id)).into((task, id) => task.copy(id = id))
