@@ -3,11 +3,9 @@ package models.task
 import com.google.inject.Inject
 import models.shilhouette.UserId
 import models.task.States.{Complete, InComplete}
-import models.task.TaskRepository.{SlickTask, Tasks}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
-import slick.jdbc.MySQLProfile.api._
-
+import slick.jdbc.H2Profile.api._
 import scala.concurrent.{ExecutionContext, Future}
 
 case class TaskId(value: Long)
@@ -36,10 +34,13 @@ object States {
 }
 
 class TaskRepository @Inject()(
-  protected val dbConfigProvider: DatabaseConfigProvider
+  protected val dbConfigProvider: DatabaseConfigProvider,
 )(
   implicit ec: ExecutionContext
 ) extends HasDatabaseConfigProvider[JdbcProfile] {
+
+  import TaskRepository._
+  import profile.api._
 
   def find(authorId: UserId): Future[Seq[Task]] = db.run {
     TableQuery[Tasks]
@@ -60,6 +61,10 @@ class TaskRepository @Inject()(
   def store(task: Task): Future[Boolean] = db.run {
     val slickTask = SlickTask.fromTask(task)
     TableQuery[Tasks].filter(_.id === slickTask.id).update(slickTask)
+  }.map(_ == 1)
+
+  def delete(taskId: TaskId): Future[Boolean] = db.run {
+    TableQuery[Tasks].filter(_.id === taskId.value).delete
   }.map(_ == 1)
 
 }

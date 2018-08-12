@@ -20,5 +20,11 @@ class TaskService @Inject()(
   def createTask(author: UserId, title: String, description: String): Future[Task] =
     taskRepository.create(author, title, description, States.InComplete)
 
+  def deleteTask(user: UserId, taskId: TaskId): Future[Boolean] = {
+    taskRepository.find(taskId).flatMap { taskOpt =>
+      taskOpt.filter(_.author == user).fold(Future.successful(false))(t => taskRepository.delete(t.id))
+    }
+  }
+
   def saveTask(user: UserId, task: Task): Future[Boolean] = taskRepository.store(task)
 }

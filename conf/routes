@@ -20,3 +20,4 @@ GET     /task/create                controllers.task.CreateTaskController.create
 POST    /task/create                controllers.task.CreateTaskController.createTask
 GET     /task/:id/edit              controllers.task.EditTaskController.editTaskForm(id: Long)
 POST    /task/:id/edit              controllers.task.EditTaskController.editTask(id: Long)
+POST    /task/:id/delete            controllers.task.DeleteTaskController.deleteTask(id: Long)

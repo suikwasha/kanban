@@ -17,4 +17,7 @@
         @select(editTaskForm("state"), possibleStates)
         <button type="submit" value="submit">submit</button>
     }
+    @form(action = controllers.task.routes.DeleteTaskController.deleteTask(taskId.value)) {
+        <button type="submit" value="submit">delete this task</button>
+    }
 }
