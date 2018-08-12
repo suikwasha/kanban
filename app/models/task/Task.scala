@@ -2,10 +2,11 @@ package models.task
 
 import com.google.inject.Inject
 import models.shilhouette.UserId
-import models.task.States.{Complete, InComplete}
+import models.task.States.{Complete, InComplete, InProgress}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 import slick.jdbc.H2Profile.api._
+
 import scala.concurrent.{ExecutionContext, Future}
 
 case class TaskId(value: Long)
@@ -22,10 +23,14 @@ sealed trait State
 
 object States {
 
-  val All = Seq(InComplete, Complete)
+  val All = Seq(InComplete, InProgress, Complete)
 
   case object InComplete extends State {
     override def toString = "InComplete"
+  }
+
+  case object InProgress extends State {
+    override def toString = "InProgress"
   }
 
   case object Complete extends State {
@@ -98,6 +103,7 @@ object TaskRepository {
     private def deserializeState(stateStringRep: String): State = {
       stateStringRep match {
         case "in_complete" => InComplete
+        case "in_progress" => InProgress
         case "complete" => Complete
         case _ => throw new IllegalStateException(s"unknown state $stateStringRep")
       }
@@ -106,6 +112,7 @@ object TaskRepository {
     private def serializeState(state: State): String = {
       state match {
         case InComplete => "in_complete"
+        case InProgress => "in_progress"
         case Complete => "complete"
       }
     }

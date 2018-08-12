@@ -4,7 +4,7 @@ import com.mohiva.play.silhouette.api.Silhouette
 import controllers.helpers.RedirectNotSignedInUsers
 import javax.inject.Inject
 import models.shilhouette.{User, UserEnv, UserId}
-import models.task.States.{Complete, InComplete}
+import models.task.States.{Complete, InComplete, InProgress}
 import models.task._
 import play.api.data.Form
 import play.api.data.Forms._
@@ -98,6 +98,7 @@ object EditTaskController {
       state match {
         case InComplete => "InComplete"
         case Complete => "Complete"
+        case InProgress => "InProgress"
       }
     }
 
@@ -105,6 +106,7 @@ object EditTaskController {
       value match {
         case "InComplete" => Some(InComplete)
         case "Complete" => Some(Complete)
+        case "InProgress" => Some(InProgress)
         case _ => None
       }
     }
