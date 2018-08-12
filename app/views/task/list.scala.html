@@ -3,6 +3,9 @@
 @main("Your tasks") {
     <h1>Your Tasks</h1>
     @for(task <- tasks) {
-        <li>@{task.title}</li>
+        <hr/>
+        <h3>@{task.title}</h3>
+        <p>@{task.description}</p>
+        <p align="right">@{task.state}</p>
     }
 }

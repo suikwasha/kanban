@@ -26,9 +26,13 @@ object States {
 
   val All = Seq(InComplete, Complete)
 
-  case object InComplete extends State
+  case object InComplete extends State {
+    override def toString = "InComplete"
+  }
 
-  case object Complete extends State
+  case object Complete extends State {
+    override def toString = "Complete"
+  }
 }
 
 class TaskRepository @Inject()(
