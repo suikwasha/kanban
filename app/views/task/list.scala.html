@@ -2,10 +2,17 @@
 
 @main("Your tasks") {
     <h1>Your Tasks</h1>
+    <ul>
+        <li><a href="@controllers.task.routes.CreateTaskController.createTaskForm()">Create Task</a></li>
+        <li><a href="@controllers.task.routes.ListTasksController.listTasks(None)">Show All Tasks</a></li>
+        <li><a href="@controllers.task.routes.ListTasksController.listTasks(Some(Seq("InComplete")))">Show InComplete</a></li>
+        <li><a href="@controllers.task.routes.ListTasksController.listTasks(Some(Seq("Complete")))">Show Complete</a></li>
+    </ul>
+    <hr/>
     @for(task <- tasks) {
-        <hr/>
         <h3>@{task.title}</h3>
         <p>@{task.description}</p>
         <p align="right">@{task.state}</p>
+        <hr/>
     }
 }

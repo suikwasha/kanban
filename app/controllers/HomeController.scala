@@ -24,10 +24,6 @@ class HomeController @Inject()(
   }
 
   private[this] def showTasks(user: User)(implicit request: Request[AnyContent]): Future[Result] = {
-    for {
-      tasks <- taskService.findTasks(user.id)
-    } yield {
-      Ok(views.html.task.list(tasks))
-    }
+    Future.successful(Redirect(controllers.task.routes.ListTasksController.listTasks(None)))
   }
 }

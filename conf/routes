@@ -16,6 +16,7 @@ GET     /signin                     controllers.SignInController.get
 POST    /signin                     controllers.SignInController.post
 
 # task
+GET     /task                       controllers.task.ListTasksController.listTasks(filter: Option[Seq[String]])
 GET     /task/create                controllers.task.CreateTaskController.createTaskForm
 POST    /task/create                controllers.task.CreateTaskController.createTask
 GET     /task/:id/edit              controllers.task.EditTaskController.editTaskForm(id: Long)
