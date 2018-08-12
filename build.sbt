@@ -25,5 +25,9 @@ libraryDependencies ++= Seq(
   "mysql" % "mysql-connector-java" % "6.0.6",
   "com.h2database" % "h2" % "1.4.197"
 )
+libraryDependencies ++= Seq(
+  "com.adrianhurt" %% "play-bootstrap" % "1.4-P26-B4-SNAPSHOT"
+)
 
 resolvers += Resolver.jcenterRepo
+resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"

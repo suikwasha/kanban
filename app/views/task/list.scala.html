@@ -1,18 +1,27 @@
 @(tasks: Seq[models.task.Task])(implicit request: Request[AnyContent])
 
 @main("Your tasks") {
-    <h1>Your Tasks</h1>
-    <ul>
-        <li><a href="@controllers.task.routes.CreateTaskController.createTaskForm()">Create Task</a></li>
-        <li><a href="@controllers.task.routes.ListTasksController.listTasks(None)">Show All Tasks</a></li>
-        <li><a href="@controllers.task.routes.ListTasksController.listTasks(Some(Seq("InComplete")))">Show InComplete</a></li>
-        <li><a href="@controllers.task.routes.ListTasksController.listTasks(Some(Seq("Complete")))">Show Complete</a></li>
-    </ul>
-    <hr/>
-    @for(task <- tasks) {
-        <h3>@{task.title}</h3>
-        <p>@{task.description}</p>
-        <p align="right">@{task.state}</p>
-        <hr/>
-    }
+    @nav(showMenu = true)
+    <div class="container">
+        <div class="row">
+        @for(task <- tasks) {
+            <div class="card mt-3" style="width: 100%">
+                <div class="card-header">
+                    <span class="w-100">@{task.title}</span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"
+                        onClick="location.href='@controllers.task.routes.EditTaskController.editTaskForm(task.id.value)'">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <p class="card-text border-primary">@{task.description}</p>
+                    <div class="btn-group float-right" role="state" aria-label="state">
+                        <button type="button" class="btn btn-primary">InComplete</button>
+                        <button type="button" class="btn btn-secondary">Complete</button>
+                    </div>
+                </div>
+            </div>
+        }
+        </div>
+    </div>
 }

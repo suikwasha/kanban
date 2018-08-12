@@ -5,11 +5,17 @@
     @import helper._
 
 @main("Create Task") {
-
-    <h1>Create Task</h1>
-    @form(action = controllers.task.routes.CreateTaskController.createTask) {
-        @inputText(createTaskForm("title"))
-        @inputText(createTaskForm("description"))
-        <button type="submit" value="submit">submit</button>
-    }
+    @nav(showMenu = true)
+    <div class="container mt-5">
+        <div class="bg-white">
+            <h2>Create New Task</h2>
+            <div class="container mt-3">
+            @b4.vertical.form(action = controllers.task.routes.CreateTaskController.createTask()) { implicit vfc =>
+                @b4.inputType("text", createTaskForm("title"), '_label -> "Title", 'placeholder -> "Title")
+                @b4.inputType("textarea", createTaskForm("description"), '_label -> "Description", 'placeholder -> "Description")
+                @b4.submit('class -> "btn btn-primary"){ Create }
+            }
+            </div>
+        </div>
+    </div>
 }

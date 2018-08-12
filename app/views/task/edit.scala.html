@@ -10,14 +10,21 @@
     @import helper._
 
 @main("Edit Task") {
-    <h1>Edit Task</h1>
-    @form(action = controllers.task.routes.EditTaskController.editTask(taskId.value)) {
-        @inputText(editTaskForm("title"))
-        @inputText(editTaskForm("description"))
-        @select(editTaskForm("state"), possibleStates)
-        <button type="submit" value="submit">submit</button>
-    }
-    @form(action = controllers.task.routes.DeleteTaskController.deleteTask(taskId.value)) {
-        <button type="submit" value="submit">delete this task</button>
-    }
+    @nav(showMenu = true)
+    <div class="container mt-5">
+        <div class="bg-white">
+            <h2>Edit Task</h2>
+            <div class="container mt-3">
+            @b4.vertical.form(action = controllers.task.routes.EditTaskController.editTask(taskId.value)) { implicit vfc =>
+                @b4.inputType("text", editTaskForm("title"), '_label -> "Title", 'placeholder -> "Title")
+                @b4.inputType("textarea", editTaskForm("description"), '_label -> "Description", 'placeholder -> "Description")
+                @b4.select(editTaskForm("state"), possibleStates, '_label -> "State")
+                @b4.submit('class -> "btn btn-primary"){ Edit }
+            }
+            @b4.vertical.form(action = controllers.task.routes.DeleteTaskController.deleteTask(taskId.value)) { implicit vfc =>
+                @b4.submit('class -> "btn btn-danger"){ Delete }
+            }
+            </div>
+        </div>
+    </div>
 }

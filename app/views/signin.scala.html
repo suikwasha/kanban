@@ -1,15 +1,20 @@
 @(signInForm: Form[SignInForm])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
     @import helper._
 
+@implicitFieldConstructor = @{ b4.vertical.fieldConstructor() }
 @main("Sign In") {
-
-
-    <h1>Sign In</h1>
-    <div>
-        @form(action = routes.SignInController.post) {
-            @helper.inputText(signInForm("name"))
-            @helper.inputPassword(signInForm("password"))
-            <button type="submit" value="submit">Sign In</button>
-        }
+    @nav(false)
+    <div class="container">
+            <div class="jumbotron bg-white">
+                <h2 class="text-center">Sign In</h2>
+                <div class="container">
+                    @b4.vertical.form(action = routes.SignInController.post) { implicit vfc =>
+                        @b4.inputType("text", signInForm("name"), '_label -> "Name", 'placeholder -> 'YourName)
+                        @b4.password(signInForm("password"), '_label -> "Password", 'placeholder -> 'YourPassword)
+                        @b4.submit('class -> "btn btn-primary"){ Sign in }
+                    }
+                </div>
+            </div>
+        </div>
     </div>
 }

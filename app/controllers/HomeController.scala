@@ -26,4 +26,8 @@ class HomeController @Inject()(
   private[this] def showTasks(user: User)(implicit request: Request[AnyContent]): Future[Result] = {
     Future.successful(Redirect(controllers.task.routes.ListTasksController.listTasks(None)))
   }
+
+  def test = Action.async { implicit request =>
+    Future.successful(Ok(views.html.index()))
+  }
 }

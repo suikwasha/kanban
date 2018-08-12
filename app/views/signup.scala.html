@@ -1,12 +1,19 @@
 @(signUpForm: Form[controllers.SignUpForm])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
     @import helper._
 
-@main("Sign In") {
-    <div>
-    @form(action = routes.SignUpController.post()) {
-        @helper.inputText(signUpForm("name"))
-        @helper.inputText(signUpForm("password"))
-        <button id="submit" type="submit" value="submit">Submit</button>
-    }
+@main("Sign Up") {
+    @nav(false)
+    <div class="container">
+        <div class="jumbotron bg-white">
+            <h2 class="text-center">Sign Up</h2>
+            <div class="container">
+            @b4.vertical.form(action = routes.SignUpController.post) { implicit vfc =>
+                @b4.inputType("text", signUpForm("name"), '_label -> "Name", 'placeholder -> 'YourName)
+                @b4.password(signUpForm("password"), '_label -> "Password", 'placeholder -> 'YourPassword)
+                @b4.submit('class -> "btn btn-primary"){ Sign up }
+            }
+            </div>
+        </div>
+    </div>
     </div>
 }

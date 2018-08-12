@@ -43,7 +43,7 @@ class CreateTaskController @Inject()(
     for {
       newTask <- taskService.createTask(user.id, form.title, form.description)
     } yield {
-      Ok(views.html.index("hoge"))
+      Redirect(controllers.task.routes.ListTasksController.listTasks(None))
     }
   }
 }
