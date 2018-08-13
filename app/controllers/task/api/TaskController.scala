@@ -1,21 +1,17 @@
 package controllers.task.api
 
-import java.text.SimpleDateFormat
 import java.time.{Instant, LocalDateTime, ZoneId}
 import java.time.format.DateTimeFormatter
 import java.util.Date
-
 import com.mohiva.play.silhouette.api.Silhouette
 import controllers.helpers.RedirectNotSignedInUsers
 import javax.inject.Inject
-import models.shilhouette.UserEnv
-import models.task.States.InComplete
+import models.shilhouette.{UserEnv, UserId}
 import models.task._
 import play.api.libs.json._
-import play.api.mvc.{AbstractController, ControllerComponents}
-
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
+import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
+import scala.concurrent.ExecutionContext
+import scala.util.Try
 
 class TaskController @Inject()
 (
@@ -29,7 +25,7 @@ class TaskController @Inject()
 {
   import TaskController._
 
-  def getTask(id: Long) = Action.async { implicit request =>
+  def getTask(id: Long): Action[AnyContent] = Action.async { implicit request =>
     forbiddenNotSignedInUsers { user =>
       taskService.findTask(user.id, TaskId(id)).map { taskOpt =>
         taskOpt.fold(
@@ -41,8 +37,13 @@ class TaskController @Inject()
     }
   }
 
-  def putTask(id: Long) = Action.async(parse.json[TaskJsonRep]) { implicit reqeust =>
-    Future.successful(Ok(Json.toJson(reqeust.body)))
+  def putTask(id: Long): Action[TaskJsonRep] = Action.async(parse.json[TaskJsonRep]) { implicit request =>
+    forbiddenNotSignedInUsers { user =>
+      taskService.saveTask(user.id, request.body.toTask(TaskId(id), user.id)).map {
+        case true => NoContent
+        case false => BadRequest("BAD_REQUEST")
+      }
+    }
   }
 
 }
@@ -51,7 +52,19 @@ object TaskController {
 
   import Reads._
 
-  case class TaskJsonRep(title: String, description: String, state: State, deadline: Option[LocalDateTime])
+  case class TaskJsonRep(title: String, description: String, state: State, deadline: Option[LocalDateTime]) {
+
+    def toTask(id: TaskId, authorId: UserId): Task = {
+      Task(
+        id = id,
+        author = authorId,
+        title = title,
+        description = description,
+        state = state,
+        deadline = toDate(deadline)
+      )
+    }
+  }
 
   object TaskJsonRep {
 
@@ -59,9 +72,15 @@ object TaskController {
       new TaskJsonRep(task.title, task.description, task.state, task.deadline)
   }
 
-  implicit private[this] def toLocalDateTime(dateOpt: Option[Date]): Option[LocalDateTime] = {
+  implicit private def toLocalDateTime(dateOpt: Option[Date]): Option[LocalDateTime] = {
     dateOpt.map { date =>
       LocalDateTime.ofInstant(Instant.ofEpochMilli(date.getTime), ZoneId.systemDefault())
+    }
+  }
+
+  implicit private def toDate(localDateTimeOpt: Option[LocalDateTime]): Option[Date] = {
+    localDateTimeOpt.map { localDateTime =>
+      Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant)
     }
   }
 

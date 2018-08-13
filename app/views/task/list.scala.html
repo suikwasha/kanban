@@ -6,40 +6,54 @@
     <div class="container">
         <div class="row">
         @for(task <- tasks) {
-            <div class="card mt-3" style="width: 100%">
+            <div id="task-@task.id" class="card mt-3" style="width: 100%">
                 <div class="card-header">
-                    <span class="w-100">@{task.title}</span>
+                    <span id="task-@task.id.value-title" class="w-100">@{task.title}</span>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"
                         onClick="location.href='@controllers.task.routes.EditTaskController.editTaskForm(task.id.value)'">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="card-body">
-                    <p class="card-text border-primary">@{task.description}</p>
+                    <p id="task-@task.id.value-description" class="card-text border-primary">@{task.description}</p>
                     <div class="dropdown float-right" role="state" aria-label="state" id="stateSelection" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <button id="state-btn-task-@task.id.value" type="button" class="btn btn-secondary dropdown-toggle">@{task.state}</button>
                         <div class="dropdown-menu" aria-labelledby="stateSelection">
-                            <a class="dropdown-item" onClick="updateState(@task.id.value, 'InComplete');" href="#">InComplete</a>
-                            <a class="dropdown-item" onClick="updateState(@task.id.value, 'InProgress');" href="#">InProgress</a>
-                            <a class="dropdown-item" onClick="updateState(@task.id.value, 'Complete');" href="#">Complete</a>
+                            <a class="dropdown-item" onClick="updateState(@task.id.value, 'InComplete', '@{controllers.task.api.routes.TaskController.putTask(task.id.value)}');" href="#">InComplete</a>
+                            <a class="dropdown-item" onClick="updateState(@task.id.value, 'InProgress', '@controllers.task.api.routes.TaskController.putTask(task.id.value)');" href="#">InProgress</a>
+                            <a class="dropdown-item" onClick="updateState(@task.id.value, 'Complete', '@controllers.task.api.routes.TaskController.putTask(task.id.value)');" href="#">Complete</a>
                         </div>
                     </div>
                 </div>
-                <div class="card-footer text-muted text-right">@{
+                <div id="task-@task.id.value-deadline" class="card-footer text-muted text-right">@{
                     task.deadline.map { date =>
-                      s"Deadline: ${new SimpleDateFormat("yyyy-mm-dd'T'HH:mm").format(date)}"
-                    }.getOrElse {
-                        "No Deadline"
-                    }
+                      s"${new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").format(date)}"
+                    }.getOrElse("")
                 }</div>
             </div>
         }
         </div>
     </div>
     <script>
-        var updateState = function(id, state) {
-            $('#state-btn-task-'+id).text(state);
-            $('#state-btn-task-'+id).val(state);
+        var updateState = function(id, state, url) {
+            var title = $("#task-"+id+"-title").text();
+            var description = $("#task-"+id+"-description").text();
+            var deadline = $("#task-"+id+"-deadline").text();
+            $.ajax({
+                url: url,
+                type: 'PUT',
+                data: JSON.stringify({
+                    "title": title,
+                    "description": description,
+                    "state": state,
+                    "deadline": deadline.length === 0 ? null : deadline
+                }),
+                contentType: 'application/json',
+                success: function(data, status) {
+                    $('#state-btn-task-'+id).text(state);
+                    $('#state-btn-task-'+id).val(state);
+                }
+            });
         };
     </script>
 }

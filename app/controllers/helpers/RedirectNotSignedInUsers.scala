@@ -25,13 +25,13 @@ trait RedirectNotSignedInUsers {
       case HandlerResult(_, None) => Future.successful(Redirect(routes.SignInController.get()))
     }
 
-  def forbiddenNotSignedInUsers(
+  def forbiddenNotSignedInUsers[T](
     block: User => Future[Result]
   )(
-    implicit request: Request[AnyContent],
+    implicit request: Request[T],
     ec: ExecutionContext
   ): Future[Result] =
-    silhouette.UserAwareRequestHandler { userAwareRequest =>
+    silhouette.UserAwareRequestHandler[T, User](request) { userAwareRequest =>
       Future.successful(HandlerResult(Ok, userAwareRequest.identity))
     }.flatMap {
       case HandlerResult(_, Some(user)) => block(user)
