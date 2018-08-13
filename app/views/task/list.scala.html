@@ -1,5 +1,5 @@
 @import java.text.SimpleDateFormat
-@(tasks: Seq[models.task.Task])(implicit request: Request[AnyContent])
+@(tasks: Seq[models.task.Task])(implicit request: Request[AnyContent], messagesProvider: MessagesProvider)
 
 @main("Your tasks") {
     @nav(showMenu = true)

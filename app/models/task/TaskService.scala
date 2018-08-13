@@ -19,6 +19,10 @@ class TaskService @Inject()(
   def findTasks(author: UserId): Future[Seq[Task]] =
     taskRepository.find(author)
 
+  def findTasks(user: UserId, titleIncludes: String): Future[Seq[Task]] = {
+    taskRepository.findByTitle(titleIncludes).map(_.filter(_.author == user))
+  }
+
   def createTask(author: UserId, title: String, description: String, deadline: Option[Date]): Future[Task] =
     taskRepository.create(author, title, description, States.InComplete, deadline)
 

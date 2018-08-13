@@ -5,6 +5,7 @@ import controllers.helpers.RedirectNotSignedInUsers
 import javax.inject._
 import models.shilhouette.{User, UserEnv}
 import models.task.TaskService
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -17,7 +18,8 @@ class HomeController @Inject()(
 )(
   implicit ec: ExecutionContext
 ) extends AbstractController(cc)
-  with RedirectNotSignedInUsers {
+  with RedirectNotSignedInUsers
+  with I18nSupport {
 
   def index = Action.async { implicit request =>
     redirectNotSignedInUsers(showTasks)

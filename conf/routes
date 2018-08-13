@@ -18,6 +18,7 @@ POST    /signin                     controllers.SignInController.post
 
 # task
 GET     /task                       controllers.task.ListTasksController.listTasks(filter: Option[Seq[String]])
+POST    /task                       controllers.task.ListTasksController.searchTasks()
 GET     /task/create                controllers.task.CreateTaskController.createTaskForm
 POST    /task/create                controllers.task.CreateTaskController.createTask
 GET     /task/:id/edit              controllers.task.EditTaskController.editTaskForm(id: Long)
@@ -27,3 +28,5 @@ POST    /task/:id/delete            controllers.task.DeleteTaskController.delete
 # api
 GET     /task/:id.json              controllers.task.api.TaskController.getTask(id: Long)
 PUT     /task/:id.json              controllers.task.api.TaskController.putTask(id: Long)
+
+# search

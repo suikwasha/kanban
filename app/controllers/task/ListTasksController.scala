@@ -6,9 +6,12 @@ import javax.inject.Inject
 import models.shilhouette.UserEnv
 import models.task.States.{Complete, InComplete}
 import models.task.{State, States, Task, TaskService}
+import play.api.data.Form
+import play.api.data.Forms._
+import play.api.i18n.I18nSupport
 import play.api.mvc.{AbstractController, ControllerComponents}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class ListTasksController @Inject()(
   cc: ControllerComponents,
@@ -17,13 +20,29 @@ class ListTasksController @Inject()(
 )(
   implicit ec: ExecutionContext
 ) extends AbstractController(cc)
+  with I18nSupport
   with RedirectNotSignedInUsers {
+
+  import ListTasksController._
 
   def listTasks(filters: Option[Seq[String]]) = Action.async { implicit request =>
     redirectNotSignedInUsers { user =>
-      taskService.findTasks(user.id).map(applyFilter(_, validateFilter(filters))).map { tasks =>
-        Ok(views.html.task.list(tasks))
+        taskService.findTasks(user.id).map(applyFilter(_, validateFilter(filters))).map { tasks =>
+          Ok(views.html.task.list(tasks))
       }
+    }
+  }
+
+  def searchTasks = Action.async { implicit request =>
+    redirectNotSignedInUsers { user =>
+      SearchTaskForm.FormInstance.bindFromRequest.fold(
+        e => Future.successful(Redirect(controllers.task.routes.ListTasksController.listTasks(None))),
+        t => {
+          taskService.findTasks(user.id, t.titleIncludes).map { tasks =>
+            Ok(views.html.task.list(tasks))
+          }
+        }
+      )
     }
   }
 
@@ -45,5 +64,19 @@ class ListTasksController @Inject()(
       case "Complete" => Some(Complete)
       case _ => None
     }
+  }
+}
+
+object ListTasksController {
+
+  case class SearchTaskForm(titleIncludes: String)
+
+  object SearchTaskForm {
+
+    val FormInstance = Form(
+      mapping(
+        "titleIncludes" -> nonEmptyText
+      )(SearchTaskForm.apply)(SearchTaskForm.unapply)
+    )
   }
 }

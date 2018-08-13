@@ -1,4 +1,9 @@
-@(showMenu: Boolean)
+@(
+    showMenu: Boolean,
+    searchForm: Form[controllers.task.ListTasksController.SearchTaskForm] = controllers.task.ListTasksController.SearchTaskForm.FormInstance
+)(
+    implicit messagesProvider: MessagesProvider
+)
 <nav class="navbar navbar-expand-lg navbar-light bg-primary text-white">
     <a class="navbar-brand text-white" href="#">Kanban</a>
     <div class="collapse navbar-collapse" id="navBarSupportedContent">
@@ -16,10 +21,13 @@
                 <a class="nav-link" href="@controllers.task.routes.CreateTaskController.createTaskForm()">Create New Task</a>
             </li>
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
+        @b4.inline.form(
+            action = controllers.task.routes.ListTasksController.searchTasks(),
+            'class -> "my-2 my-lg-0"
+        ) { implicit vfc =>
+            @b4.search(searchForm("titleIncludes"), 'placeholder -> "search with titles here.", 'class -> "form-control mr-sm-2")
+            @b4.submit('class -> "btn btn-success my-2 my-sm-0"){ Search }
+        }
     </div>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
