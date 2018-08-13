@@ -25,6 +25,29 @@ trait RedirectNotSignedInUsers {
       case HandlerResult(_, None) => Future.successful(Redirect(routes.SignInController.get()))
     }
 
+  def forbiddenNotSignedInUsers(
+    block: User => Future[Result]
+  )(
+    implicit request: Request[AnyContent],
+    ec: ExecutionContext
+  ): Future[Result] =
+    silhouette.UserAwareRequestHandler { userAwareRequest =>
+      Future.successful(HandlerResult(Ok, userAwareRequest.identity))
+    }.flatMap {
+      case HandlerResult(_, Some(user)) => block(user)
+      case HandlerResult(_, None) => Future.successful(Forbidden("{}"))
+    }
+
+  def forbiddenNotSignedUsersAsync(
+    block: (User, Request[AnyContent]) => Future[Result]
+  )(
+    implicit ec: ExecutionContext
+  ): Action[AnyContent] = Action.async { implicit request =>
+    forbiddenNotSignedInUsers { user =>
+      block(user, request)
+    }
+  }
+
   def redirectNotSignedInUsersAsync(
     block: (User, Request[AnyContent]) => Future[Result]
   )(

@@ -23,3 +23,6 @@ POST    /task/create                controllers.task.CreateTaskController.create
 GET     /task/:id/edit              controllers.task.EditTaskController.editTaskForm(id: Long)
 POST    /task/:id/edit              controllers.task.EditTaskController.editTask(id: Long)
 POST    /task/:id/delete            controllers.task.DeleteTaskController.deleteTask(id: Long)
+
+# api
+GET     /task/:id.json              controllers.task.api.TaskController.getTask(id: Long)
