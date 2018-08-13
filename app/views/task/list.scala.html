@@ -1,3 +1,4 @@
+@import java.text.SimpleDateFormat
 @(tasks: Seq[models.task.Task])(implicit request: Request[AnyContent])
 
 @main("Your tasks") {
@@ -15,12 +16,30 @@
                 </div>
                 <div class="card-body">
                     <p class="card-text border-primary">@{task.description}</p>
-                    <div class="btn-group float-right" role="state" aria-label="state">
-                        <button type="button" class="btn btn-primary">@{task.state}</button>
+                    <div class="dropdown float-right" role="state" aria-label="state" id="stateSelection" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button id="state-btn-task-@task.id.value" type="button" class="btn btn-secondary dropdown-toggle">@{task.state}</button>
+                        <div class="dropdown-menu" aria-labelledby="stateSelection">
+                            <a class="dropdown-item" onClick="updateState(@task.id.value, 'InComplete');" href="#">InComplete</a>
+                            <a class="dropdown-item" onClick="updateState(@task.id.value, 'InProgress');" href="#">InProgress</a>
+                            <a class="dropdown-item" onClick="updateState(@task.id.value, 'Complete');" href="#">Complete</a>
+                        </div>
                     </div>
                 </div>
+                <div class="card-footer text-muted text-right">@{
+                    task.deadline.map { date =>
+                      s"Deadline: ${new SimpleDateFormat("yyyy-mm-dd'T'HH:mm").format(date)}"
+                    }.getOrElse {
+                        "No Deadline"
+                    }
+                }</div>
             </div>
         }
         </div>
     </div>
+    <script>
+        var updateState = function(id, state) {
+            $('#state-btn-task-'+id).text(state);
+            $('#state-btn-task-'+id).val(state);
+        };
+    </script>
 }
