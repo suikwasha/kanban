@@ -27,7 +27,7 @@ sealed trait State
 
 object States {
 
-  val All = Seq(InComplete, InProgress, Complete)
+  val All: Seq[State] = Seq(InComplete, InProgress, Complete)
 
   case object InComplete extends State {
     override def toString = "InComplete"

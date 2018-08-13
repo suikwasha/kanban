@@ -26,3 +26,4 @@ POST    /task/:id/delete            controllers.task.DeleteTaskController.delete
 
 # api
 GET     /task/:id.json              controllers.task.api.TaskController.getTask(id: Long)
+PUT     /task/:id.json              controllers.task.api.TaskController.putTask(id: Long)
