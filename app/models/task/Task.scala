@@ -1,5 +1,8 @@
 package models.task
 
+import java.sql.Timestamp
+import java.util.{Calendar, Date}
+
 import com.google.inject.Inject
 import models.shilhouette.UserId
 import models.task.States.{Complete, InComplete, InProgress}
@@ -16,7 +19,8 @@ case class Task(
   author: UserId,
   title: String,
   description: String,
-  state: State
+  state: State,
+  deadline: Option[Date]
 )
 
 sealed trait State
@@ -60,7 +64,7 @@ class TaskRepository @Inject()(
   def create(author: UserId, title: String, description: String, state: State): Future[Task] = db.run {
     val tasks = TableQuery[Tasks]
     val insert = tasks.returning(tasks.map(_.id)).into((task, id) => task.copy(id = id))
-    insert += SlickTask.fromTask(Task(TaskId(0), author, title, description, state))
+    insert += SlickTask.fromTask(Task(TaskId(0), author, title, description, state, None))
   }.map(_.toTask)
 
   def store(task: Task): Future[Boolean] = db.run {
@@ -76,7 +80,7 @@ class TaskRepository @Inject()(
 
 object TaskRepository {
 
-  case class SlickTask(id: Long, authorId: Long, title: String, description: String, state: String) {
+  case class SlickTask(id: Long, authorId: Long, title: String, description: String, state: String, deadline: Option[Timestamp]) {
 
     import SlickTask._
 
@@ -85,10 +89,22 @@ object TaskRepository {
       author = UserId(authorId),
       title = title,
       description = description,
-      state = deserializeState(state)
+      state = deserializeState(state),
+      deadline = None
     )
-
   }
+
+  implicit def toTimestamp(dateOpt: Option[Date]): Option[Timestamp] =
+    dateOpt.map { date =>
+      val cal = Calendar.getInstance
+      cal.setTime(date)
+      cal.set(Calendar.MILLISECOND, 0)
+      new Timestamp(cal.getTimeInMillis)
+    }
+
+  implicit def toDate(timestampOpt: Option[Timestamp]): Option[Date] =
+    timestampOpt.map(t => new Date(t.getTime))
+
 
   object SlickTask {
 
@@ -97,7 +113,8 @@ object TaskRepository {
       authorId = from.author.value,
       title = from.title,
       description = from.description,
-      state = serializeState(from.state)
+      state = serializeState(from.state),
+      deadline = from.deadline
     )
 
     private def deserializeState(stateStringRep: String): State = {
@@ -132,7 +149,9 @@ object TaskRepository {
 
     def state= column[String]("STATE")
 
-    def * = (id, authorId, title, description, state) <> (SlickTask.tupled, SlickTask.unapply)
+    def deadline = column[Option[Timestamp]]("DEADLINE")
+
+    def * = (id, authorId, title, description, state, deadline) <> (SlickTask.tupled, SlickTask.unapply)
 
   }
 }

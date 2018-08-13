@@ -78,7 +78,7 @@ object EditTaskController {
     import EditTaskForm._
 
     def toTask(id: TaskId, authorId: UserId): Task =
-      fromString(state).map(Task(id, authorId, title, description, _)).getOrElse {
+      fromString(state).map(Task(id, authorId, title, description, _, None)).getOrElse {
         throw new IllegalStateException(s"unknown state $state")
       }
   }
