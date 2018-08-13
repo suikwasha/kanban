@@ -2,7 +2,8 @@
 @(
     taskId: TaskId,
     possibleStates: Seq[(String, String)],
-    editTaskForm: Form[controllers.task.EditTaskController.EditTaskForm]
+    editTaskForm: Form[controllers.task.EditTaskController.EditTaskForm],
+    err: Option[String]
 )(
     implicit request: RequestHeader,
     messagesProvider: MessagesProvider
@@ -15,9 +16,16 @@
         <div class="bg-white">
             <h2>Edit Task</h2>
             <div class="container mt-3">
+            @err.map { err =>
+                <div class="alert alert-danger alert-error">
+                    <a href="#" class="close" data-dismiss="alert">&times;</a>
+                    <strong>@err</strong>
+                </div>
+            }
             @b4.vertical.form(action = controllers.task.routes.EditTaskController.editTask(taskId.value)) { implicit vfc =>
                 @b4.inputType("text", editTaskForm("title"), '_label -> "Title", 'placeholder -> "Title")
                 @b4.inputType("textarea", editTaskForm("description"), '_label -> "Description", 'placeholder -> "Description")
+                @b4.datetimeLocal(editTaskForm("deadline"), '_label -> "Deadline", 'placeholder -> "hogehogehoge")
                 @b4.select(editTaskForm("state"), possibleStates, '_label -> "State")
                 @b4.submit('class -> "btn btn-primary"){ Edit }
             }

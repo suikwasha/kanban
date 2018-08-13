@@ -1,4 +1,4 @@
-@(createTaskForm: Form[controllers.task.CreateTaskController.CreateTaskForm])(
+@(createTaskForm: Form[controllers.task.CreateTaskController.CreateTaskForm], err: Option[String])(
     implicit request: RequestHeader,
     messagesProvider: MessagesProvider
 )
@@ -10,9 +10,16 @@
         <div class="bg-white">
             <h2>Create New Task</h2>
             <div class="container mt-3">
+            @err.map { err =>
+                <div class="alert alert-danger alert-error">
+                    <a href="#" class="close" data-dismiss="alert">&times;</a>
+                    <strong>@err</strong>
+                </div>
+            }
             @b4.vertical.form(action = controllers.task.routes.CreateTaskController.createTask()) { implicit vfc =>
                 @b4.inputType("text", createTaskForm("title"), '_label -> "Title", 'placeholder -> "Title")
                 @b4.inputType("textarea", createTaskForm("description"), '_label -> "Description", 'placeholder -> "Description")
+                @b4.datetimeLocal(createTaskForm("deadline"), '_label -> "Deadline")
                 @b4.submit('class -> "btn btn-primary"){ Create }
             }
             </div>

@@ -1,5 +1,7 @@
 package models.task
 
+import java.util.Date
+
 import javax.inject.Inject
 import models.shilhouette.UserId
 
@@ -17,8 +19,8 @@ class TaskService @Inject()(
   def findTasks(author: UserId): Future[Seq[Task]] =
     taskRepository.find(author)
 
-  def createTask(author: UserId, title: String, description: String): Future[Task] =
-    taskRepository.create(author, title, description, States.InComplete)
+  def createTask(author: UserId, title: String, description: String, deadline: Option[Date]): Future[Task] =
+    taskRepository.create(author, title, description, States.InComplete, deadline)
 
   def deleteTask(user: UserId, taskId: TaskId): Future[Boolean] = {
     taskRepository.find(taskId).flatMap { taskOpt =>

@@ -1,5 +1,8 @@
 package controllers.task
 
+import java.time.{Instant, LocalDateTime, ZoneId, ZoneOffset}
+import java.util.Date
+
 import com.mohiva.play.silhouette.api.Silhouette
 import controllers.helpers.RedirectNotSignedInUsers
 import javax.inject.Inject
@@ -43,7 +46,8 @@ class EditTaskController @Inject()(
         views.html.task.edit(
           task.id,
           possibleStates,
-          EditTaskForm.fromTask(task)
+          EditTaskForm.fromTask(task),
+          None
         )
       )
     )
@@ -54,7 +58,7 @@ class EditTaskController @Inject()(
   def editTask(id: Long): Action[AnyContent] =  Action.async { implicit request =>
     redirectNotSignedInUsers { user =>
       EditTaskForm.FormInstance.bindFromRequest.fold(
-        e => Future.successful(BadRequest(views.html.task.edit(TaskId(id), possibleStates, e))),
+        e => Future.successful(BadRequest(views.html.task.edit(TaskId(id), possibleStates, e, Some(e.errors.mkString(","))))),
         saveTask(user, TaskId(id), _)
       )
     }
@@ -64,7 +68,7 @@ class EditTaskController @Inject()(
     val newTask = form.toTask(targetId, executor.id)
     taskService.saveTask(executor.id, newTask).map { isSucceeded =>
       if(isSucceeded) {
-        Ok(views.html.task.edit(targetId, possibleStates, EditTaskForm.fromTask(newTask)))
+        Redirect(controllers.task.routes.EditTaskController.editTask(targetId.value))
       } else {
         BadRequest("BAD_REQUEST")
       }
@@ -74,25 +78,31 @@ class EditTaskController @Inject()(
 
 object EditTaskController {
 
-  case class EditTaskForm(title: String, description: String, state: String) {
+  case class EditTaskForm(title: String, description: String, state: String, deadline: Option[LocalDateTime]) {
     import EditTaskForm._
 
     def toTask(id: TaskId, authorId: UserId): Task =
-      fromString(state).map(Task(id, authorId, title, description, _, None)).getOrElse {
+      fromString(state).map(Task(id, authorId, title, description, _, deadline)).getOrElse {
         throw new IllegalStateException(s"unknown state $state")
       }
+
+    implicit private[this] def toDate(localDateTimeOpt: Option[LocalDateTime]): Option[Date] = {
+      localDateTimeOpt.map { localDateTime =>
+        Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant)
+      }
+    }
   }
 
   object EditTaskForm {
 
     def fromTask(task: Task): Form[EditTaskForm] =
-      FormInstance.bind(
-        Map(
-          "title" -> task.title,
-          "description" -> task.description,
-          "state" -> toString(task.state)
-        )
-      )
+      FormInstance.fill(EditTaskForm(task.title,task.description, toString(task.state), task.deadline))
+
+    implicit private[this] def toLocalDateTime(dateOpt: Option[Date]): Option[LocalDateTime] = {
+      dateOpt.map { date =>
+        LocalDateTime.ofInstant(Instant.ofEpochMilli(date.getTime), ZoneId.systemDefault())
+      }
+    }
 
     def toString(state: State): String = {
       state match {
@@ -117,7 +127,8 @@ object EditTaskController {
       mapping(
         "title" -> nonEmptyText,
         "description" -> nonEmptyText,
-        "state" -> StateValidator
+        "state" -> StateValidator,
+        "deadline" -> optional(localDateTime("yyyy-MM-dd'T'HH:mm"))
       )(EditTaskForm.apply)(EditTaskForm.unapply)
     )
   }

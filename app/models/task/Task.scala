@@ -61,10 +61,10 @@ class TaskRepository @Inject()(
     TableQuery[Tasks].filter(t => t.id === taskId.value).result.headOption
   }.map(_.map(_.toTask))
 
-  def create(author: UserId, title: String, description: String, state: State): Future[Task] = db.run {
+  def create(author: UserId, title: String, description: String, state: State, deadline: Option[Date]): Future[Task] = db.run {
     val tasks = TableQuery[Tasks]
     val insert = tasks.returning(tasks.map(_.id)).into((task, id) => task.copy(id = id))
-    insert += SlickTask.fromTask(Task(TaskId(0), author, title, description, state, None))
+    insert += SlickTask.fromTask(Task(TaskId(0), author, title, description, state, deadline))
   }.map(_.toTask)
 
   def store(task: Task): Future[Boolean] = db.run {
@@ -90,7 +90,7 @@ object TaskRepository {
       title = title,
       description = description,
       state = deserializeState(state),
-      deadline = None
+      deadline = deadline
     )
   }
 
