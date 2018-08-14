@@ -3,7 +3,7 @@ package controllers.task
 import com.mohiva.play.silhouette.api.Silhouette
 import controllers.helpers.RedirectNotSignedInUsers
 import javax.inject.Inject
-import models.shilhouette.UserEnv
+import models.silhouette.UserEnv
 import models.task.States.{Complete, InComplete}
 import models.task.{State, States, Task, TaskService}
 import play.api.data.Form

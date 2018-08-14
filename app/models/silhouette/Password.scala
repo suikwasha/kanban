@@ -1,4 +1,4 @@
-package models.shilhouette
+package models.silhouette
 
 import slick.jdbc.MySQLProfile.api._
 

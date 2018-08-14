@@ -1,4 +1,4 @@
-package models.shilhouette
+package models.silhouette
 
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
@@ -18,9 +18,9 @@ class UserIdentityService @Inject()(
 
   override def retrieve(loginInfo: LoginInfo): Future[Option[User]] = userRepository.find(loginInfo.providerKey, loginInfo.providerID)
 
-  def create(name: String, password: String): Future[User] = {
+  def create(name: String, email: Option[String], password: String): Future[User] = {
     for {
-      newUser <- userRepository.create(name, CredentialsProvider.ID, name)
+      newUser <- userRepository.create(name, email, CredentialsProvider.ID, name)
       _ <- authInfoRepository.add(LoginInfo(CredentialsProvider.ID, newUser.name), hasher.hash(password))
     } yield newUser
   }

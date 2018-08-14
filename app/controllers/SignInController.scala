@@ -4,7 +4,7 @@ import com.mohiva.play.silhouette.api.Silhouette
 import com.mohiva.play.silhouette.api.util.Credentials
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import javax.inject.Inject
-import models.shilhouette.{UserEnv, UserIdentityService}
+import models.silhouette.{UserEnv, UserIdentityService}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AbstractController, AnyContent, ControllerComponents, Request}
 import play.api.data.Form

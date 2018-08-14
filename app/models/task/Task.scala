@@ -3,7 +3,7 @@ package models.task
 import java.sql.Timestamp
 import java.util.{Calendar, Date}
 import com.google.inject.Inject
-import models.shilhouette.UserId
+import models.silhouette.UserId
 import models.task.States.{Complete, InComplete, InProgress}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
@@ -48,6 +48,13 @@ class TaskRepository @Inject()(
 
   import TaskRepository._
   import profile.api._
+
+  def find(from: Date, until: Date): Future[Seq[Task]] = db.run {
+    val fromTs: Option[Timestamp] = toTimestamp(Some(from))
+    val untilTs: Option[Timestamp] = toTimestamp(Some(until))
+    TableQuery[Tasks]
+      .filter(t => t.deadline between(fromTs, untilTs)).result
+  }.map(_.map(_.toTask))
 
   def find(authorId: UserId): Future[Seq[Task]] = db.run {
     TableQuery[Tasks]

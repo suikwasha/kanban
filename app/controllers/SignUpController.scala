@@ -1,15 +1,15 @@
 package controllers
 
+import javax.inject.Inject
+import play.api.mvc._
+import play.api.data.Form
+import play.api.data.Forms._
+import scala.concurrent.{ExecutionContext, Future}
 import com.mohiva.play.silhouette.api.services.AuthenticatorService
 import com.mohiva.play.silhouette.api.{LoginInfo, Silhouette}
 import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
-import javax.inject.Inject
-import models.shilhouette.{UserEnv, UserIdentityService}
-import play.api.mvc._
-import scala.concurrent.{ExecutionContext, Future}
-import play.api.data.Form
-import play.api.data.Forms._
+import models.silhouette.{UserEnv, UserIdentityService}
 
 class SignUpController @Inject()(
   cc: ControllerComponents,
@@ -23,11 +23,11 @@ class SignUpController @Inject()(
 
   val authService: AuthenticatorService[CookieAuthenticator] = silhouette.env.authenticatorService
 
-  def get= silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
+  def get: Action[AnyContent] = silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
     Future.successful(Ok(views.html.signup(SignUpForm.FormInstance)))
   }
 
-  def post = silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
+  def post: Action[AnyContent] = silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
     SignUpForm.FormInstance.bindFromRequest.fold(
       e => Future.successful(Ok(views.html.signup(e))),
       signUpForm => createUser(signUpForm)
@@ -37,7 +37,7 @@ class SignUpController @Inject()(
   private[this] def createUser(form: SignUpForm) = {
     userService.retrieve(LoginInfo(CredentialsProvider.ID, form.name)).flatMap { userOpt =>
       if(userOpt.isEmpty) {
-        userService.create(form.name, form.password).map(_ => Redirect(routes.HomeController.index()))
+        userService.create(form.name, form.email, form.password).map(_ => Redirect(routes.HomeController.index()))
       } else {
         Future.successful(Redirect(routes.SignUpController.get()))
       }
@@ -45,14 +45,15 @@ class SignUpController @Inject()(
   }
 }
 
-case class SignUpForm(name: String, password: String)
+case class SignUpForm(name: String, password: String, email: Option[String])
 
 object SignUpForm {
 
   val FormInstance = Form(
     mapping(
       "name" -> nonEmptyText,
-      "password" -> nonEmptyText
+      "password" -> nonEmptyText,
+      "email" -> optional(email)
     )(SignUpForm.apply)(SignUpForm.unapply)
   )
 

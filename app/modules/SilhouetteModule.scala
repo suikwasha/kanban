@@ -14,7 +14,7 @@ import com.mohiva.play.silhouette.password.BCryptPasswordHasher
 import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
 import com.mohiva.play.silhouette.persistence.repositories.DelegableAuthInfoRepository
 import javax.inject.Named
-import models.shilhouette.{PasswordInfoRepository, UserEnv, UserIdentityService, UserRepository}
+import models.silhouette.{PasswordInfoRepository, UserEnv, UserIdentityService, UserRepository}
 import net.codingwell.scalaguice.ScalaModule
 import play.api.Configuration
 import play.api.mvc.CookieHeaderEncoding

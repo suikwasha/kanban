@@ -6,7 +6,7 @@ import java.util.Date
 import com.mohiva.play.silhouette.api.Silhouette
 import controllers.helpers.RedirectNotSignedInUsers
 import javax.inject.Inject
-import models.shilhouette.{UserEnv, UserId}
+import models.silhouette.{UserEnv, UserId}
 import models.task._
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}

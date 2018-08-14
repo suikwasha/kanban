@@ -2,7 +2,7 @@ package controllers.helpers
 
 import com.mohiva.play.silhouette.api.{Env, HandlerResult, Silhouette}
 import controllers.routes
-import models.shilhouette.{User, UserEnv}
+import models.silhouette.{User, UserEnv}
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}

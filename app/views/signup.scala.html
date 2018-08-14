@@ -9,6 +9,7 @@
             <div class="container">
             @b4.vertical.form(action = routes.SignUpController.post) { implicit vfc =>
                 @b4.inputType("text", signUpForm("name"), '_label -> "Name", 'placeholder -> 'YourName)
+                @b4.email(signUpForm("email"), '_label -> "Email", 'placeholder -> "YourEmail(optional)")
                 @b4.password(signUpForm("password"), '_label -> "Password", 'placeholder -> 'YourPassword)
                 @b4.submit('class -> "btn btn-primary"){ Sign up }
             }
