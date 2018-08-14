@@ -1,6 +1,6 @@
 package batch.notifications
 
-import javax.inject.{Inject, Named}
+import javax.inject.Inject
 import models.silhouette.User
 import models.task.Task
 import play.api.libs.mailer.{Email, MailerClient}
@@ -8,11 +8,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class EmailNotificationService @Inject()(
   mailer: MailerClient,
-  @Named("EmailNotification-Sender") sender: String,
+  senderProvider: EmailNotificationSenderProvider,
   sentEmailNotificationRepository: SentEmailNotificationRepository
 )(
   implicit ec: ExecutionContext
 ){
+
+  private[this] val sender = senderProvider.get
 
   def sendDeadlineNotification(user: User, task: Task): Future[Unit] = {
     sentEmailNotificationRepository.find(task.id).map { senOpt =>

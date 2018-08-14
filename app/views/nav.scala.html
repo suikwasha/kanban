@@ -22,6 +22,9 @@
             <li class="nav-item">
                 <a class="nav-link" href="@controllers.task.web.routes.CreateTaskController.createTaskForm()">Create New Task</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="@controllers.auth.routes.SignOutController.signOut()">SignOut</a>
+            </li>
         </ul>
         @b4.inline.form(
             action = controllers.task.web.routes.ListTasksController.searchTasks(),
@@ -31,7 +34,4 @@
             @b4.submit('class -> "btn btn-success my-2 my-sm-0"){ Search }
         }
     </div>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
 </nav>

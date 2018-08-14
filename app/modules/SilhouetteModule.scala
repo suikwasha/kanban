@@ -18,7 +18,6 @@ import models.silhouette.{PasswordInfoRepository, UserEnv, UserIdentityService, 
 import net.codingwell.scalaguice.ScalaModule
 import play.api.Configuration
 import play.api.mvc.CookieHeaderEncoding
-
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class SilhouetteModule extends AbstractModule with ScalaModule {

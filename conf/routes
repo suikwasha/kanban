@@ -16,6 +16,7 @@ GET     /signup                     controllers.auth.SignUpController.get
 POST    /signup                     controllers.auth.SignUpController.post
 GET     /signin                     controllers.auth.SignInController.get
 POST    /signin                     controllers.auth.SignInController.post
+GET     /signout                    controllers.auth.SignOutController.signOut
 
 # task
 GET     /task                       controllers.task.web.ListTasksController.listTasks(filter: Option[Seq[String]])
