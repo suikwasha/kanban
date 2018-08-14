@@ -4,7 +4,7 @@ import java.sql.Timestamp
 import java.util.{Calendar, Date}
 
 import com.google.inject.Inject
-import models.shilhouette.UserId
+import models.silhouette.UserId
 import models.task.States.{Complete, InComplete, InProgress}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile

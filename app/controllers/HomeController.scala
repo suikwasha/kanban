@@ -3,7 +3,7 @@ package controllers
 import com.mohiva.play.silhouette.api.{HandlerResult, Silhouette}
 import controllers.helpers.RedirectNotSignedInUsers
 import javax.inject._
-import models.shilhouette.{User, UserEnv}
+import models.silhouette.{User, UserEnv}
 import models.task.TaskService
 import play.api.mvc._
 

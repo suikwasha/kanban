@@ -3,7 +3,7 @@ package models.task
 import java.util.Date
 
 import javax.inject.Inject
-import models.shilhouette.UserId
+import models.silhouette.UserId
 
 import scala.concurrent.{ExecutionContext, Future}
 

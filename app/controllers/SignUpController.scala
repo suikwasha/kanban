@@ -5,7 +5,7 @@ import com.mohiva.play.silhouette.api.{LoginInfo, Silhouette}
 import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import javax.inject.Inject
-import models.shilhouette.{UserEnv, UserIdentityService}
+import models.silhouette.{UserEnv, UserIdentityService}
 import play.api.mvc._
 import scala.concurrent.{ExecutionContext, Future}
 import play.api.data.Form

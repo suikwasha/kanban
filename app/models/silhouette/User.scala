@@ -1,4 +1,4 @@
-package models.shilhouette
+package models.silhouette
 
 import com.mohiva.play.silhouette.api.Identity
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider

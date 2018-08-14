@@ -6,7 +6,7 @@ import java.util.Date
 import com.mohiva.play.silhouette.api.Silhouette
 import controllers.helpers.RedirectNotSignedInUsers
 import javax.inject.Inject
-import models.shilhouette.{User, UserEnv, UserId}
+import models.silhouette.{User, UserEnv, UserId}
 import models.task.States.{Complete, InComplete, InProgress}
 import models.task._
 import play.api.data.Form
