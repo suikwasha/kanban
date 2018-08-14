@@ -20,6 +20,8 @@ libraryDependencies ++= Seq(
   "com.mohiva" %% "play-silhouette-testkit" % "5.0.0-RC2" % "test"
 )
 libraryDependencies ++= Seq(
+  "com.typesafe.play" %% "play-mailer" % "6.0.1",
+  "com.typesafe.play" %% "play-mailer-guice" % "6.0.1",
   "com.typesafe.play" %% "play-slick" % "3.0.0",
   "com.typesafe.play" %% "play-slick-evolutions" % "3.0.0",
   "mysql" % "mysql-connector-java" % "6.0.6",

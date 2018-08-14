@@ -28,10 +28,15 @@ class UserRepository @Inject()(
       .headOption
   }.map(_.map(_.toUser))
 
-  def create(name: String, providerId: String, providerKey: String): Future[User] = db.run {
+  def find(id: UserId): Future[Option[User]] = db.run {
+    TableQuery[Users]
+      .filter(u => u.id === id.value).result.headOption
+  }.map(_.map(_.toUser))
+
+  def create(name: String, email: Option[String], providerId: String, providerKey: String): Future[User] = db.run {
     val users = TableQuery[Users]
     val insert = users.returning(users.map(_.id)).into((user, id) => user.copy(id = id))
-    insert += SlickUser(0, name, None, CredentialsProvider.ID, providerKey)
+    insert += SlickUser(0, name, email, CredentialsProvider.ID, providerKey)
   }.map(_.toUser)
 
 }

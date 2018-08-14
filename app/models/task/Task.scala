@@ -51,6 +51,13 @@ class TaskRepository @Inject()(
   import TaskRepository._
   import profile.api._
 
+  def find(from: Date, until: Date): Future[Seq[Task]] = db.run {
+    val fromTs: Option[Timestamp] = toTimestamp(Some(from))
+    val untilTs: Option[Timestamp] = toTimestamp(Some(until))
+    TableQuery[Tasks]
+      .filter(t => t.deadline between(fromTs, untilTs)).result
+  }.map(_.map(_.toTask))
+
   def find(authorId: UserId): Future[Seq[Task]] = db.run {
     TableQuery[Tasks]
       .filter(t => t.authorId === authorId.value)

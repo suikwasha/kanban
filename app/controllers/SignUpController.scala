@@ -37,7 +37,7 @@ class SignUpController @Inject()(
   private[this] def createUser(form: SignUpForm) = {
     userService.retrieve(LoginInfo(CredentialsProvider.ID, form.name)).flatMap { userOpt =>
       if(userOpt.isEmpty) {
-        userService.create(form.name, form.password).map(_ => Redirect(routes.HomeController.index()))
+        userService.create(form.name, form.email, form.password).map(_ => Redirect(routes.HomeController.index()))
       } else {
         Future.successful(Redirect(routes.SignUpController.get()))
       }
