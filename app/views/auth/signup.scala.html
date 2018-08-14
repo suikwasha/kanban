@@ -1,5 +1,10 @@
-@(signUpForm: Form[controllers.SignUpForm])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
-    @import helper._
+@import controllers.auth.SignUpController.SignUpForm
+@(
+    signUpForm: Form[SignUpForm]
+)(
+    implicit request: RequestHeader,
+    messagesProvider: MessagesProvider
+)
 
 @main("Sign Up") {
     @nav(false)
@@ -7,7 +12,7 @@
         <div class="jumbotron bg-white">
             <h2 class="text-center">Sign Up</h2>
             <div class="container">
-            @b4.vertical.form(action = routes.SignUpController.post) { implicit vfc =>
+            @b4.vertical.form(action = controllers.auth.routes.SignUpController.post) { implicit vfc =>
                 @b4.inputType("text", signUpForm("name"), '_label -> "Name", 'placeholder -> 'YourName)
                 @b4.email(signUpForm("email"), '_label -> "Email", 'placeholder -> "YourEmail(optional)")
                 @b4.password(signUpForm("password"), '_label -> "Password", 'placeholder -> 'YourPassword)
@@ -15,6 +20,5 @@
             }
             </div>
         </div>
-    </div>
     </div>
 }

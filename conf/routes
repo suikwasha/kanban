@@ -12,19 +12,19 @@ GET     /ttaaaa                     controllers.TestController.bbb
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 
 # authentications
-GET     /signup                     controllers.SignUpController.get
-POST    /signup                     controllers.SignUpController.post
-GET     /signin                     controllers.SignInController.get
-POST    /signin                     controllers.SignInController.post
+GET     /signup                     controllers.auth.SignUpController.get
+POST    /signup                     controllers.auth.SignUpController.post
+GET     /signin                     controllers.auth.SignInController.get
+POST    /signin                     controllers.auth.SignInController.post
 
 # task
-GET     /task                       controllers.task.ListTasksController.listTasks(filter: Option[Seq[String]])
-POST    /task                       controllers.task.ListTasksController.searchTasks()
-GET     /task/create                controllers.task.CreateTaskController.createTaskForm
-POST    /task/create                controllers.task.CreateTaskController.createTask
-GET     /task/:id/edit              controllers.task.EditTaskController.editTaskForm(id: Long)
-POST    /task/:id/edit              controllers.task.EditTaskController.editTask(id: Long)
-POST    /task/:id/delete            controllers.task.DeleteTaskController.deleteTask(id: Long)
+GET     /task                       controllers.task.web.ListTasksController.listTasks(filter: Option[Seq[String]])
+POST    /task                       controllers.task.web.ListTasksController.searchTasks()
+GET     /task/create                controllers.task.web.CreateTaskController.createTaskForm
+POST    /task/create                controllers.task.web.CreateTaskController.createTask
+GET     /task/:id/edit              controllers.task.web.EditTaskController.editTaskForm(id: Long)
+POST    /task/:id/edit              controllers.task.web.EditTaskController.editTask(id: Long)
+POST    /task/:id/delete            controllers.task.web.DeleteTaskController.deleteTask(id: Long)
 
 # api
 GET     /task/:id.json              controllers.task.api.TaskController.getTask(id: Long)

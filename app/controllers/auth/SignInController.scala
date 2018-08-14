@@ -1,15 +1,14 @@
-package controllers
+package controllers.auth
 
 import com.mohiva.play.silhouette.api.Silhouette
 import com.mohiva.play.silhouette.api.util.Credentials
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import javax.inject.Inject
 import models.silhouette.{UserEnv, UserIdentityService}
-import play.api.i18n.I18nSupport
-import play.api.mvc.{AbstractController, AnyContent, ControllerComponents, Request}
 import play.api.data.Form
 import play.api.data.Forms._
-
+import play.api.i18n.I18nSupport
+import play.api.mvc._
 import scala.concurrent.{ExecutionContext, Future}
 
 class SignInController @Inject()(
@@ -22,13 +21,15 @@ class SignInController @Inject()(
 ) extends AbstractController(cc)
   with I18nSupport {
 
-  def get = silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
-    Future.successful(Ok(views.html.signin(SignInForm.FormInstance)))
+  import SignInController._
+
+  def get: Action[AnyContent] = silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
+    Future.successful(Ok(views.html.auth.signin(SignInForm.FormInstance)))
   }
 
-  def post = silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
+  def post: Action[AnyContent] = silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
     SignInForm.FormInstance.bindFromRequest.fold (
-      e => Future.successful(BadRequest(views.html.signin(e))),
+      e => Future.successful(BadRequest(views.html.auth.signin(e))),
       signIn
     )
   }
@@ -40,7 +41,7 @@ class SignInController @Inject()(
       loginInfo <- credentialsProvider.authenticate(Credentials(signInForm.name, signInForm.password))
       authenticator <- authenticatorService.create(loginInfo)
       cookie <- authenticatorService.init(authenticator)
-      result <- authenticatorService.embed(cookie, Redirect(routes.HomeController.index()))
+      result <- authenticatorService.embed(cookie, Redirect(controllers.routes.HomeController.index()))
     } yield {
       result
     }).recover {
@@ -52,14 +53,19 @@ class SignInController @Inject()(
   }
 }
 
-case class SignInForm(name: String, password: String)
+object SignInController {
 
-object SignInForm {
+  case class SignInForm(name: String, password: String)
 
-  val FormInstance = Form(
-    mapping(
-      "name" -> nonEmptyText,
-      "password" -> nonEmptyText
-    )(SignInForm.apply)(SignInForm.unapply)
-  )
+  object SignInForm {
+
+    val FormInstance = Form(
+      mapping(
+        "name" -> nonEmptyText,
+        "password" -> nonEmptyText
+      )(SignInForm.apply)(SignInForm.unapply)
+    )
+  }
 }
+
+

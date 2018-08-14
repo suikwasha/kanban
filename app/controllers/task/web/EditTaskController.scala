@@ -1,11 +1,10 @@
-package controllers.task
+package controllers.task.web
 
-import java.time.{Instant, LocalDateTime, ZoneId, ZoneOffset}
+import java.time.{Instant, LocalDateTime, ZoneId}
 import java.util.Date
-
+import javax.inject.Inject
 import com.mohiva.play.silhouette.api.Silhouette
 import controllers.helpers.RedirectNotSignedInUsers
-import javax.inject.Inject
 import models.silhouette.{User, UserEnv, UserId}
 import models.task.States.{Complete, InComplete, InProgress}
 import models.task._
@@ -13,7 +12,6 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-
 import scala.concurrent.{ExecutionContext, Future}
 
 class EditTaskController @Inject()(
@@ -31,16 +29,12 @@ class EditTaskController @Inject()(
   def editTaskForm(id: Long): Action[AnyContent] = Action.async { implicit request =>
     redirectNotSignedInUsers { user =>
       taskService.findTask(user.id, TaskId(id)).flatMap { taskOpt =>
-        taskOpt.fold(
-          Future.successful(NotFound("NOT_FOUND"))
-        )(
-          showEditTask
-        )
+        taskOpt.fold(Future.successful(NotFound("NOT_FOUND")))(showEditTask)
       }
     }
   }
 
-  private[this] def showEditTask(task: Task)(implicit request: Request[AnyContent]): Future[Result] = {
+  private[this] def showEditTask(task: Task)(implicit request: Request[AnyContent]): Future[Result] =
     Future.successful(
       Ok(
         views.html.task.edit(
@@ -51,7 +45,6 @@ class EditTaskController @Inject()(
         )
       )
     )
-  }
 
   private[this] def possibleStates = States.All.map(EditTaskForm.toString).map(t => t -> t)
 
@@ -68,7 +61,7 @@ class EditTaskController @Inject()(
     val newTask = form.toTask(targetId, executor.id)
     taskService.saveTask(executor.id, newTask).map { isSucceeded =>
       if(isSucceeded) {
-        Redirect(controllers.task.routes.EditTaskController.editTask(targetId.value))
+        Redirect(controllers.task.web.routes.EditTaskController.editTask(targetId.value))
       } else {
         BadRequest("BAD_REQUEST")
       }

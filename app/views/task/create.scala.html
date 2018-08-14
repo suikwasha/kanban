@@ -1,8 +1,10 @@
-@(createTaskForm: Form[controllers.task.CreateTaskController.CreateTaskForm], err: Option[String])(
+@(
+    createTaskForm: Form[controllers.task.web.CreateTaskController.CreateTaskForm],
+    err: Option[String]
+)(
     implicit request: RequestHeader,
     messagesProvider: MessagesProvider
 )
-    @import helper._
 
 @main("Create Task") {
     @nav(showMenu = true)
@@ -16,7 +18,7 @@
                     <strong>@err</strong>
                 </div>
             }
-            @b4.vertical.form(action = controllers.task.routes.CreateTaskController.createTask()) { implicit vfc =>
+            @b4.vertical.form(action = controllers.task.web.routes.CreateTaskController.createTask()) { implicit vfc =>
                 @b4.inputType("text", createTaskForm("title"), '_label -> "Title", 'placeholder -> "Title")
                 @b4.inputType("textarea", createTaskForm("description"), '_label -> "Description", 'placeholder -> "Description")
                 @b4.datetimeLocal(createTaskForm("deadline"), '_label -> "Deadline")

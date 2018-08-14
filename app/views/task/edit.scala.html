@@ -2,13 +2,12 @@
 @(
     taskId: TaskId,
     possibleStates: Seq[(String, String)],
-    editTaskForm: Form[controllers.task.EditTaskController.EditTaskForm],
+    editTaskForm: Form[controllers.task.web.EditTaskController.EditTaskForm],
     err: Option[String]
 )(
     implicit request: RequestHeader,
     messagesProvider: MessagesProvider
 )
-    @import helper._
 
 @main("Edit Task") {
     @nav(showMenu = true)
@@ -22,14 +21,14 @@
                     <strong>@err</strong>
                 </div>
             }
-            @b4.vertical.form(action = controllers.task.routes.EditTaskController.editTask(taskId.value)) { implicit vfc =>
+            @b4.vertical.form(action = controllers.task.web.routes.EditTaskController.editTask(taskId.value)) { implicit vfc =>
                 @b4.inputType("text", editTaskForm("title"), '_label -> "Title", 'placeholder -> "Title")
                 @b4.inputType("textarea", editTaskForm("description"), '_label -> "Description", 'placeholder -> "Description")
                 @b4.datetimeLocal(editTaskForm("deadline"), '_label -> "Deadline", 'placeholder -> "hogehogehoge")
                 @b4.select(editTaskForm("state"), possibleStates, '_label -> "State")
                 @b4.submit('class -> "btn btn-primary"){ Edit }
             }
-            @b4.vertical.form(action = controllers.task.routes.DeleteTaskController.deleteTask(taskId.value)) { implicit vfc =>
+            @b4.vertical.form(action = controllers.task.web.routes.DeleteTaskController.deleteTask(taskId.value)) { implicit vfc =>
                 @b4.submit('class -> "btn btn-danger"){ Delete }
             }
             </div>

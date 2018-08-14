@@ -1,4 +1,4 @@
-package controllers.task
+package controllers.task.web
 
 import java.time.{LocalDateTime, ZoneId}
 import java.util.Date
@@ -7,11 +7,10 @@ import controllers.helpers.RedirectNotSignedInUsers
 import javax.inject.Inject
 import models.silhouette.{User, UserEnv}
 import models.task.TaskService
-import play.api.mvc._
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.I18nSupport
-
+import play.api.mvc._
 import scala.concurrent.{ExecutionContext, Future}
 
 class CreateTaskController @Inject()(
@@ -45,7 +44,7 @@ class CreateTaskController @Inject()(
     for {
       newTask <- taskService.createTask(user.id, form.title, form.description, form.deadline)
     } yield {
-      Redirect(controllers.task.routes.ListTasksController.listTasks(None))
+      Redirect(controllers.task.web.routes.ListTasksController.listTasks(None))
     }
   }
 

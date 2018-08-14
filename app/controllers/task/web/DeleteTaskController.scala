@@ -1,4 +1,4 @@
-package controllers.task
+package controllers.task.web
 
 import com.mohiva.play.silhouette.api.Silhouette
 import controllers.helpers.RedirectNotSignedInUsers

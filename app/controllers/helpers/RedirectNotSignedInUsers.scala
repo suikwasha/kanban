@@ -1,10 +1,8 @@
 package controllers.helpers
 
-import com.mohiva.play.silhouette.api.{Env, HandlerResult, Silhouette}
-import controllers.routes
-import models.silhouette.{User, UserEnv}
 import play.api.mvc._
-
+import com.mohiva.play.silhouette.api.{HandlerResult, Silhouette}
+import models.silhouette.{User, UserEnv}
 import scala.concurrent.{ExecutionContext, Future}
 
 trait RedirectNotSignedInUsers {
@@ -22,7 +20,7 @@ trait RedirectNotSignedInUsers {
       Future.successful(HandlerResult(Ok, userAwareRequest.identity))
     }.flatMap {
       case HandlerResult(_, Some(user)) => block(user)
-      case HandlerResult(_, None) => Future.successful(Redirect(routes.SignInController.get()))
+      case HandlerResult(_, None) => Future.successful(Redirect(controllers.auth.routes.SignInController.get()))
     }
 
   def forbiddenNotSignedInUsers[T](

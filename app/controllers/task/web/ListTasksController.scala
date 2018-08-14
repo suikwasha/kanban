@@ -1,15 +1,15 @@
-package controllers.task
+package controllers.task.web
 
 import com.mohiva.play.silhouette.api.Silhouette
 import controllers.helpers.RedirectNotSignedInUsers
 import javax.inject.Inject
 import models.silhouette.UserEnv
 import models.task.States.{Complete, InComplete}
-import models.task.{State, States, Task, TaskService}
+import models.task.{State, Task, TaskService}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.I18nSupport
-import play.api.mvc.{AbstractController, ControllerComponents}
+import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -25,7 +25,7 @@ class ListTasksController @Inject()(
 
   import ListTasksController._
 
-  def listTasks(filters: Option[Seq[String]]) = Action.async { implicit request =>
+  def listTasks(filters: Option[Seq[String]]): Action[AnyContent] = Action.async { implicit request =>
     redirectNotSignedInUsers { user =>
         taskService.findTasks(user.id).map(applyFilter(_, validateFilter(filters))).map { tasks =>
           Ok(views.html.task.list(tasks))
@@ -33,10 +33,10 @@ class ListTasksController @Inject()(
     }
   }
 
-  def searchTasks = Action.async { implicit request =>
+  def searchTasks: Action[AnyContent] = Action.async { implicit request =>
     redirectNotSignedInUsers { user =>
       SearchTaskForm.FormInstance.bindFromRequest.fold(
-        e => Future.successful(Redirect(controllers.task.routes.ListTasksController.listTasks(None))),
+        e => Future.successful(Redirect(controllers.task.web.routes.ListTasksController.listTasks(None))),
         t => {
           taskService.findTasks(user.id, t.titleIncludes).map { tasks =>
             Ok(views.html.task.list(tasks))

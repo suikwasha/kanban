@@ -1,5 +1,10 @@
 @import java.text.SimpleDateFormat
-@(tasks: Seq[models.task.Task])(implicit request: Request[AnyContent], messagesProvider: MessagesProvider)
+@(
+    tasks: Seq[models.task.Task]
+)(
+    implicit request: Request[AnyContent],
+    messagesProvider: MessagesProvider
+)
 
 @main("Your tasks") {
     @nav(showMenu = true)
@@ -10,7 +15,7 @@
                 <div class="card-header">
                     <span id="task-@task.id.value-title" class="w-100">@{task.title}</span>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"
-                        onClick="location.href='@controllers.task.routes.EditTaskController.editTaskForm(task.id.value)'">
+                        onClick="location.href='@controllers.task.web.routes.EditTaskController.editTaskForm(task.id.value)'">
                         <span aria-hidden="true">Edit</span>
                     </button>
                 </div>
@@ -51,7 +56,6 @@
                 contentType: 'application/json',
                 success: function(data, status) {
                     $('#state-btn-task-'+id).text(state);
-                    $('#state-btn-task-'+id).val(state);
                 }
             });
         };

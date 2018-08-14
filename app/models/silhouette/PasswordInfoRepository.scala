@@ -30,10 +30,11 @@ class PasswordInfoRepository @Inject()(val dbConfigProvider: DatabaseConfigProvi
     )
   }.map(_ => authInfo)
 
+  /**
+   * パスワードの変更は実装してない
+   */
   override def update(loginInfo: LoginInfo, authInfo: PasswordInfo): Future[PasswordInfo] = ???
-
   override def save(loginInfo: LoginInfo, authInfo: PasswordInfo): Future[PasswordInfo] = ???
-
   override def remove(loginInfo: LoginInfo): Future[Unit] = ???
 }
 
