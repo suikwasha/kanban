@@ -1,0 +1,5 @@
+# --- !Ups
+ALTER TABLE `USER` ADD (`EMAIL` TEXT);
+
+# --- !Downs
+ALTER TABLE `USER` DROP `EMAIL`;
