@@ -5,12 +5,13 @@ import controllers.NavBar
 import controllers.helpers.RedirectNotSignedInUsers
 import javax.inject.Inject
 import models.silhouette.{User, UserEnv}
-import models.task.States.{Complete, InComplete}
-import models.task.{State, Task, TaskService}
+import models.task.States.{Complete, InComplete, InProgress}
+import models.task.{State, States, Task, TaskService}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class ListTasksController @Inject()(
@@ -80,13 +81,7 @@ class ListTasksController @Inject()(
 
   private[this] def validateFilter(filter: Option[Seq[String]]): Option[Seq[State]] = filter.map(_.flatMap(fromString))
 
-  def fromString(value: String): Option[State] = {
-    value match {
-      case "InComplete" => Some(InComplete)
-      case "Complete" => Some(Complete)
-      case _ => None
-    }
-  }
+  def fromString(value: String): Option[State] = States.All.find(_.toString == value)
 }
 
 object ListTasksController {
