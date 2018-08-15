@@ -1,11 +1,13 @@
+@import controllers.task.web.CreateTaskController.CreateTaskPage
 @(
-    navBar: NavBar,
-    createTaskForm: Form[controllers.task.web.CreateTaskController.CreateTaskForm],
-    err: Option[String]
+    createTaskPage: CreateTaskPage
 )(
     implicit request: RequestHeader,
     messagesProvider: MessagesProvider
 )
+@import createTaskPage.navBar
+@import createTaskPage.createTaskForm
+@import createTaskPage.errorMessage
 
 @main("Create Task") {
     @nav(navBar)
@@ -13,7 +15,7 @@
         <div class="bg-white">
             <h2>Create New Task</h2>
             <div class="container mt-3">
-            @err.map { err =>
+            @errorMessage.map { err =>
                 <div class="alert alert-danger alert-error">
                     <a href="#" class="close" data-dismiss="alert">&times;</a>
                     <strong>@err</strong>

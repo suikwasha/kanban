@@ -5,7 +5,7 @@ import controllers.helpers.RedirectNotSignedInUsers
 import javax.inject.Inject
 import models.silhouette.UserEnv
 import models.task.{TaskId, TaskService}
-import play.api.mvc.{AbstractController, ControllerComponents}
+import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
 
 import scala.concurrent.ExecutionContext
 
@@ -18,7 +18,7 @@ class DeleteTaskController @Inject()(
 ) extends AbstractController(cc)
   with RedirectNotSignedInUsers {
 
-  def deleteTask(id: Long) = Action.async { implicit request =>
+  def deleteTask(id: Long): Action[AnyContent] = Action.async { implicit request =>
     redirectNotSignedInUsers { user =>
       taskService.deleteTask(user.id, TaskId(id)).map {
         case true => Redirect(controllers.routes.HomeController.index())

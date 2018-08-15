@@ -1,14 +1,16 @@
 @import models.task.TaskId
+@import controllers.task.web.EditTaskController.EditTaskPage
 @(
-    navBar: NavBar,
-    taskId: TaskId,
-    possibleStates: Seq[(String, String)],
-    editTaskForm: Form[controllers.task.web.EditTaskController.EditTaskForm],
-    err: Option[String]
+    editTaskPage: EditTaskPage
 )(
     implicit request: RequestHeader,
     messagesProvider: MessagesProvider
 )
+@import editTaskPage.navBar
+@import editTaskPage.editTaskForm
+@import editTaskPage.possibleStates
+@import editTaskPage.errorMessage
+@import editTaskPage.taskId
 
 @main("Edit Task") {
     @nav(navBar)
@@ -16,7 +18,7 @@
         <div class="bg-white">
             <h2>Edit Task</h2>
             <div class="container mt-3">
-            @err.map { err =>
+            @errorMessage.map { err =>
                 <div class="alert alert-danger alert-error">
                     <a href="#" class="close" data-dismiss="alert">&times;</a>
                     <strong>@err</strong>

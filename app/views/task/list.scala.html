@@ -1,11 +1,13 @@
 @import java.text.SimpleDateFormat
+@import controllers.task.web.ListTasksController.ListTasksPage
 @(
-    navBar: NavBar,
-    tasks: Seq[models.task.Task]
+    listTasksPage: ListTasksPage
 )(
     implicit request: Request[AnyContent],
     messagesProvider: MessagesProvider
 )
+@import listTasksPage.navBar
+@import listTasksPage.tasks
 
 @main("Your tasks") {
     @nav(navBar)

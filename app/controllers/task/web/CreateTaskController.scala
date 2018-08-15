@@ -28,17 +28,27 @@ class CreateTaskController @Inject()(
 
   def createTaskForm: Action[AnyContent] = Action.async { implicit request =>
     redirectNotSignedInUsers { _ =>
-      Future.successful(Ok(views.html.task.create(NavBar(showMenu = true), CreateTaskForm.FormInstance, None)))
+      Future.successful(Ok(views.html.task.create(CreateTaskPage.Default)))
     }
   }
 
   def createTask: Action[AnyContent] = Action.async { implicit request =>
     redirectNotSignedInUsers { user =>
-      CreateTaskForm.FormInstance.bindFromRequest.fold(
-        e => Future.successful(BadRequest(views.html.task.create(NavBar(showMenu = true), e, Some(e.errors.mkString(","))))),
-        createTask(user, _)
-      )
+      CreateTaskForm.FormInstance.bindFromRequest.fold(badRequest, createTask(user, _))
     }
+  }
+
+  private[this] def badRequest(invalidForm: Form[CreateTaskForm])(implicit request: Request[AnyContent]): Future[Result] = {
+    Future.successful(
+      BadRequest(
+        views.html.task.create(
+          CreateTaskPage.Default.copy(
+            createTaskForm = invalidForm,
+            errorMessage = Some(invalidForm.errors.mkString(","))
+          )
+        )
+      )
+    )
   }
 
   private[this] def createTask(user: User, form: CreateTaskForm): Future[Result] = {
@@ -58,11 +68,22 @@ class CreateTaskController @Inject()(
 
 object CreateTaskController {
 
+  case class CreateTaskPage(
+    navBar: NavBar,
+    createTaskForm: Form[CreateTaskForm],
+    errorMessage: Option[String]
+  )
+
+  object CreateTaskPage {
+
+    val Default = CreateTaskPage(NavBar(showMenu = true), CreateTaskForm.FormInstance, None)
+  }
+
   case class CreateTaskForm(title: String, description: String, deadline: Option[LocalDateTime])
 
   object CreateTaskForm {
 
-    val FormInstance = Form(
+    val FormInstance: Form[CreateTaskForm] = Form(
       mapping(
         "title" -> nonEmptyText,
         "description" -> nonEmptyText,

@@ -2,7 +2,6 @@ package controllers.task.web
 
 import java.time.{Instant, LocalDateTime, ZoneId}
 import java.util.Date
-
 import javax.inject.Inject
 import com.mohiva.play.silhouette.api.Silhouette
 import controllers.NavBar
@@ -41,24 +40,33 @@ class EditTaskController @Inject()(
     Future.successful(
       Ok(
         views.html.task.edit(
-          NavBar(showMenu = true),
-          task.id,
-          possibleStates,
-          EditTaskForm.fromTask(task),
-          None
+          EditTaskPage.Default.copy(
+            taskId = task.id,
+            editTaskForm = EditTaskForm.fromTask(task)
+          )
         )
       )
     )
 
-  private[this] def possibleStates = States.All.map(EditTaskForm.toString).map(t => t -> t)
 
   def editTask(id: Long): Action[AnyContent] =  Action.async { implicit request =>
     redirectNotSignedInUsers { user =>
-      EditTaskForm.FormInstance.bindFromRequest.fold(
-        e => Future.successful(BadRequest(views.html.task.edit(NavBar(showMenu = true), TaskId(id), possibleStates, e, Some(e.errors.mkString(","))))),
-        saveTask(user, TaskId(id), _)
-      )
+      EditTaskForm.FormInstance.bindFromRequest.fold(badRequest(TaskId(id), _), saveTask(user, TaskId(id), _))
     }
+  }
+
+  private[this] def badRequest(id: TaskId, invalidForm: Form[EditTaskForm])(implicit request: Request[AnyContent]): Future[Result] = {
+    Future.successful(
+      BadRequest(
+        views.html.task.edit(
+          EditTaskPage.Default.copy(
+            taskId = id,
+            editTaskForm = invalidForm,
+            errorMessage = Some(invalidForm.errors.mkString(","))
+          )
+        )
+      )
+    )
   }
 
   private[this] def saveTask(executor: User, targetId: TaskId, form: EditTaskForm)(implicit request: Request[AnyContent]): Future[Result] = {
@@ -74,6 +82,21 @@ class EditTaskController @Inject()(
 }
 
 object EditTaskController {
+
+  case class EditTaskPage(
+    navBar: NavBar,
+    possibleStates: Seq[(String, String)],
+    taskId: TaskId,
+    editTaskForm: Form[EditTaskForm],
+    errorMessage: Option[String]
+  )
+
+  object EditTaskPage {
+
+    private[this] def possibleStates: Seq[(String, String)] = States.All.map(EditTaskForm.toString).map(t => t -> t)
+
+    val Default: EditTaskPage = EditTaskPage(NavBar(showMenu = true), possibleStates, TaskId(0), EditTaskForm.FormInstance, None)
+  }
 
   case class EditTaskForm(title: String, description: String, state: String, deadline: Option[LocalDateTime]) {
     import EditTaskForm._
