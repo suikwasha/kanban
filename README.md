@@ -1,5 +1,6 @@
 # kanban
 かんばんのなりそこない
+`http://suikwasha.com:18080`にサンプルがあります
 
 ## features
 
@@ -8,8 +9,9 @@
 - タスクの期限の設定
 - タスクの状態（未完了、作業中、完了）
 - タスクの状態による絞り込み
-- タスクタイトルによる部分一致検索
+- タスクタイトルによる検索
 - 期限1日に前になったタスクの通知
+- dockerイメージのビルド
 
 ## configuration
 `config/application.conf`を編集してください。
@@ -19,8 +21,8 @@
 ```$xslt
 # slick settings
 slick.dbs.default.profile = "slick.jdbc.H2Profile$"
-slick.dbs.default.db.driver = "org.h2.Driver"
-slick.dbs.default.db.url = "jdbc:h2:file:./h2db"
+slick.dbs.default.db.driver = "
+slick.dbs.default.db.url = "jdbc:mysql://<.....>"
 slick.dbs.default.db.user = "your username"
 slick.dbs.default.db.password = "your password"
 ```
@@ -37,7 +39,7 @@ play.mailer {
   mock = yes
 }
 ```
-`play.mailer`の設定は以下を参考にしてください
+`play.mailer`の設定は以下を参考にしてください(デフォルトではモックの実装になります)
 ```$xslt
 play.mailer {
   host = "example.com" // (mandatory)
@@ -59,8 +61,17 @@ play.mailer {
 ### ビルド方法
 `sbt compile`
 
+### 起動方法
+`sbt run`または`sbt start`
+
 ### テスト方法
 `sbt test:compile test`
 
-### dockerイメージの作成
+### docker
+ビルド済みのイメージが`https://hub.docker.com/r/abrengw/kanban/`にあります
+
+#### イメージの作成
 `sbt docker:publishLocal`
+#### コンテナの起動
+`docker run -d -v <path_to_your_config>:/opt/docker/conf/application.conf -p <port>:9000 kanban:1.0.1`
+

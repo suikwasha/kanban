@@ -31,5 +31,6 @@ lazy val root = (project in file("."))
         Resolver.jcenterRepo,
         "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
       ),
-      dockerBaseImage := "openjdk:8u181"
+      dockerBaseImage := "openjdk:8u181",
+      dockerEntrypoint := Seq("bin/kanban")
     )
