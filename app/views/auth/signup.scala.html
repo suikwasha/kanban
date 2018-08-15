@@ -1,11 +1,13 @@
 @import controllers.auth.SignUpController.SignUpForm
+@import controllers.auth.SignUpController.SignUpPage
 @(
-    navBar: NavBar,
-    signUpForm: Form[SignUpForm]
+    signUpPage: SignUpPage
 )(
     implicit request: RequestHeader,
     messagesProvider: MessagesProvider
 )
+@import signUpPage.navBar
+@import signUpPage.signUpForm
 
 @main("Sign Up") {
     @nav(navBar)

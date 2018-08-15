@@ -25,17 +25,18 @@ class SignUpController @Inject()(
   import SignUpController._
 
   def get: Action[AnyContent] = silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
-    Future.successful(Ok(views.html.auth.signup(NavBar(showMenu = false), SignUpForm.FormInstance)))
+    Future.successful(Ok(views.html.auth.signup(SignUpPage.Default)))
   }
 
   def post: Action[AnyContent] = silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
-    SignUpForm.FormInstance.bindFromRequest.fold(
-      e => Future.successful(Ok(views.html.auth.signup(NavBar(showMenu = false), e))),
-      signUpForm => createUser(signUpForm)
-    )
+    SignUpForm.FormInstance.bindFromRequest.fold(badRequest, createUser)
   }
 
-  private[this] def createUser(form: SignUpForm) = {
+  private[this] def badRequest(invalidForm: Form[SignUpForm])(implicit request: Request[AnyContent]): Future[Result] = {
+    Future.successful(BadRequest(views.html.auth.signup(SignUpPage.Default.copy(signUpForm = invalidForm))))
+  }
+
+  private[this] def createUser(form: SignUpForm): Future[Result] = {
     userService.retrieve(LoginInfo(CredentialsProvider.ID, form.name)).flatMap { userOpt =>
       if(userOpt.isEmpty) {
         userService.create(form.name, form.email, form.password).map(_ => Redirect(controllers.routes.HomeController.index()))
@@ -48,11 +49,21 @@ class SignUpController @Inject()(
 
 object SignUpController {
 
+  case class SignUpPage(
+    navBar: NavBar,
+    signUpForm: Form[SignUpForm]
+  )
+
+  object SignUpPage {
+
+    val Default: SignUpPage = SignUpPage(NavBar(showMenu = false), SignUpForm.FormInstance)
+  }
+
   case class SignUpForm(name: String, password: String, email: Option[String])
 
   object SignUpForm {
 
-    val FormInstance = Form(
+    val FormInstance: Form[SignUpForm] = Form(
       mapping(
         "name" -> nonEmptyText,
         "password" -> nonEmptyText,

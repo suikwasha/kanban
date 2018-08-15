@@ -67,7 +67,7 @@ object SignInController {
 
   object SignInPage {
 
-    val Default = SignInPage(NavBar(showMenu = false), SignInForm.FormInstance))
+    val Default: SignInPage = SignInPage(NavBar(showMenu = false), SignInForm.FormInstance)
   }
 
   case class SignInForm(name: String, password: String)
