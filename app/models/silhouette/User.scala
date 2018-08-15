@@ -28,6 +28,11 @@ class UserRepository @Inject()(
       .headOption
   }.map(_.map(_.toUser))
 
+  def find(name: String): Future[Option[User]] = db.run {
+    TableQuery[Users]
+      .filter(u => u.name === name).result.headOption
+  }.map(_.map(_.toUser))
+
   def find(id: UserId): Future[Option[User]] = db.run {
     TableQuery[Users]
       .filter(u => u.id === id.value).result.headOption
