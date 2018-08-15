@@ -51,17 +51,22 @@ class SendingEmailNotificationActor(
   private[this] def checkTasks: Unit = {
     val now = Instant.now
     val tomorrow = now.plus(1, ChronoUnit.DAYS)
-    for {
+    (for {
       tasks <- taskRepository.find(Date.from(now), Date.from(tomorrow)).map(_.groupBy(_.author))
       users <- Future.sequence(tasks.keySet.toSeq.map(userRepository.find))
       _ <- Future.sequence(users.flatten.flatMap(u => tasks.get(u.id).map(sendNotification(u, _))))
     } yield {
       self ! Finished
+    }).recover {
+      case t: Throwable =>
+        logger.error("{}", t)
+        self ! Finished
     }
   }
 
 
   private[this] def sendNotification(user: User, tasks: Seq[Task]): Future[Seq[Unit]] = {
+    logger.info(s"$user $tasks")
     Future.sequence(tasks.map(notificationService.sendDeadlineNotification(user, _)))
   }
 }

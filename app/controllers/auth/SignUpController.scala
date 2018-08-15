@@ -2,6 +2,7 @@ package controllers.auth
 
 import com.mohiva.play.silhouette.api.{LoginInfo, Silhouette}
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
+import controllers.NavBar
 import javax.inject.Inject
 import models.silhouette.{UserEnv, UserIdentityService}
 import play.api.data.Form
@@ -24,12 +25,12 @@ class SignUpController @Inject()(
   import SignUpController._
 
   def get: Action[AnyContent] = silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
-    Future.successful(Ok(views.html.auth.signup(SignUpForm.FormInstance)))
+    Future.successful(Ok(views.html.auth.signup(NavBar(showMenu = false), SignUpForm.FormInstance)))
   }
 
   def post: Action[AnyContent] = silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
     SignUpForm.FormInstance.bindFromRequest.fold(
-      e => Future.successful(Ok(views.html.auth.signup(e))),
+      e => Future.successful(Ok(views.html.auth.signup(NavBar(showMenu = false), e))),
       signUpForm => createUser(signUpForm)
     )
   }

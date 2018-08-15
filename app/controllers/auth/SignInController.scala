@@ -3,8 +3,10 @@ package controllers.auth
 import com.mohiva.play.silhouette.api.Silhouette
 import com.mohiva.play.silhouette.api.util.Credentials
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
+import controllers.NavBar
 import javax.inject.Inject
 import models.silhouette.{UserEnv, UserIdentityService}
+import org.slf4j.LoggerFactory
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.I18nSupport
@@ -23,13 +25,15 @@ class SignInController @Inject()(
 
   import SignInController._
 
+  private[this] val logger = LoggerFactory.getLogger(getClass)
+
   def get: Action[AnyContent] = silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
-    Future.successful(Ok(views.html.auth.signin(SignInForm.FormInstance)))
+    Future.successful(Ok(views.html.auth.signin(NavBar(showMenu = false), SignInForm.FormInstance)))
   }
 
   def post: Action[AnyContent] = silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
     SignInForm.FormInstance.bindFromRequest.fold (
-      e => Future.successful(BadRequest(views.html.auth.signin(e))),
+      err => Future.successful(BadRequest(views.html.auth.signin(NavBar(showMenu = false), err))),
       signIn
     )
   }
@@ -46,7 +50,7 @@ class SignInController @Inject()(
       result
     }).recover {
       case e: Exception => {
-        e.printStackTrace()
+        logger.warn("{}", e)
         Redirect(routes.SignUpController.get())
       }
     }

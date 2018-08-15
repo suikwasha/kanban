@@ -2,8 +2,10 @@ package controllers.task.web
 
 import java.time.{Instant, LocalDateTime, ZoneId}
 import java.util.Date
+
 import javax.inject.Inject
 import com.mohiva.play.silhouette.api.Silhouette
+import controllers.NavBar
 import controllers.helpers.RedirectNotSignedInUsers
 import models.silhouette.{User, UserEnv, UserId}
 import models.task.States.{Complete, InComplete, InProgress}
@@ -12,6 +14,7 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class EditTaskController @Inject()(
@@ -38,6 +41,7 @@ class EditTaskController @Inject()(
     Future.successful(
       Ok(
         views.html.task.edit(
+          NavBar(showMenu = true),
           task.id,
           possibleStates,
           EditTaskForm.fromTask(task),
@@ -51,7 +55,7 @@ class EditTaskController @Inject()(
   def editTask(id: Long): Action[AnyContent] =  Action.async { implicit request =>
     redirectNotSignedInUsers { user =>
       EditTaskForm.FormInstance.bindFromRequest.fold(
-        e => Future.successful(BadRequest(views.html.task.edit(TaskId(id), possibleStates, e, Some(e.errors.mkString(","))))),
+        e => Future.successful(BadRequest(views.html.task.edit(NavBar(showMenu = true), TaskId(id), possibleStates, e, Some(e.errors.mkString(","))))),
         saveTask(user, TaskId(id), _)
       )
     }

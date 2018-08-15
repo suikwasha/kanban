@@ -1,5 +1,6 @@
 @import models.task.TaskId
 @(
+    navBar: NavBar,
     taskId: TaskId,
     possibleStates: Seq[(String, String)],
     editTaskForm: Form[controllers.task.web.EditTaskController.EditTaskForm],
@@ -10,7 +11,7 @@
 )
 
 @main("Edit Task") {
-    @nav(showMenu = true)
+    @nav(navBar)
     <div class="container mt-5">
         <div class="bg-white">
             <h2>Edit Task</h2>

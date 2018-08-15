@@ -5,6 +5,7 @@ import com.google.inject.Inject
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 import slick.jdbc.H2Profile.api._
+import slick.lifted.ProvenShape
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -53,10 +54,10 @@ object SentEmailNotificationRepository {
 
   class SentEmailNotifications(tag: Tag) extends Table[SlickSentEmailNotification](tag, "SENT_EMAIL_NOTIFICATIONS") {
 
-    def id = column[Long]("ID", O.PrimaryKey, O.AutoInc)
+    def id: Rep[Long] = column[Long]("ID", O.PrimaryKey, O.AutoInc)
 
-    def taskId = column[Long]("TAKS_ID")
+    def taskId: Rep[Long] = column[Long]("TASK_ID")
 
-    def * = (id, taskId) <> (SlickSentEmailNotification.tupled, SlickSentEmailNotification.unapply)
+    def * : ProvenShape[SlickSentEmailNotification] = (id, taskId) <> (SlickSentEmailNotification.tupled, SlickSentEmailNotification.unapply)
   }
 }

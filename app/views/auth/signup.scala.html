@@ -1,5 +1,6 @@
 @import controllers.auth.SignUpController.SignUpForm
 @(
+    navBar: NavBar,
     signUpForm: Form[SignUpForm]
 )(
     implicit request: RequestHeader,
@@ -7,7 +8,7 @@
 )
 
 @main("Sign Up") {
-    @nav(false)
+    @nav(navBar)
     <div class="container">
         <div class="jumbotron bg-white">
             <h2 class="text-center">Sign Up</h2>

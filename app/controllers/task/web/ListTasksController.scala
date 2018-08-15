@@ -1,6 +1,7 @@
 package controllers.task.web
 
 import com.mohiva.play.silhouette.api.Silhouette
+import controllers.NavBar
 import controllers.helpers.RedirectNotSignedInUsers
 import javax.inject.Inject
 import models.silhouette.UserEnv
@@ -27,8 +28,8 @@ class ListTasksController @Inject()(
 
   def listTasks(filters: Option[Seq[String]]): Action[AnyContent] = Action.async { implicit request =>
     redirectNotSignedInUsers { user =>
-        taskService.findTasks(user.id).map(applyFilter(_, validateFilter(filters))).map { tasks =>
-          Ok(views.html.task.list(tasks))
+      taskService.findTasks(user.id).map(applyFilter(_, validateFilter(filters))).map { tasks =>
+        Ok(views.html.task.list(NavBar(showMenu = true), tasks))
       }
     }
   }
@@ -39,7 +40,7 @@ class ListTasksController @Inject()(
         e => Future.successful(Redirect(controllers.task.web.routes.ListTasksController.listTasks(None))),
         t => {
           taskService.findTasks(user.id, t.titleIncludes).map { tasks =>
-            Ok(views.html.task.list(tasks))
+            Ok(views.html.task.list(NavBar(showMenu = true, searchTaskForm = SearchTaskForm.FormInstance.fill(t)), tasks))
           }
         }
       )

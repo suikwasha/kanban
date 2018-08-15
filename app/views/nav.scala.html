@@ -1,37 +1,48 @@
 @(
-    showMenu: Boolean,
-    searchForm: Form[controllers.task.web.ListTasksController.SearchTaskForm] =
-        controllers.task.web.ListTasksController.SearchTaskForm.FormInstance
+    navBar: NavBar
 )(
     implicit messagesProvider: MessagesProvider
 )
 
+@import navBar.searchTaskForm
+
 <nav class="navbar navbar-expand-lg navbar-light bg-primary text-white">
     <a class="navbar-brand text-white" href="#">Kanban</a>
     <div class="collapse navbar-collapse" id="navBarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="@controllers.task.web.routes.ListTasksController.listTasks(None)">All</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="@controllers.task.web.routes.ListTasksController.listTasks(Some(Seq("InComplete")))">InComplete</a>
-             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="@controllers.task.web.routes.ListTasksController.listTasks(Some(Seq("Complete")))">Complete</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="@controllers.task.web.routes.CreateTaskController.createTaskForm()">Create New Task</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="@controllers.auth.routes.SignOutController.signOut()">SignOut</a>
-            </li>
-        </ul>
-        @b4.inline.form(
-            action = controllers.task.web.routes.ListTasksController.searchTasks(),
-            'class -> "my-2 my-lg-0"
-        ) { implicit vfc =>
-            @b4.search(searchForm("titleIncludes"), 'placeholder -> "search with titles here.", 'class -> "form-control mr-sm-2")
-            @b4.submit('class -> "btn btn-success my-2 my-sm-0"){ Search }
+        @if(navBar.showMenu) {
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="@controllers.task.web.routes.ListTasksController.listTasks(None)">All</a>
+                </li>
+                @for(state <- navBar.stateFilter) {
+                    <li class="nav-item">
+                        <a class="nav-link" href="@controllers.task.web.routes.ListTasksController.listTasks(Some(Seq(state.toString)))">@state.toString</a>
+                    </li>
+
+                }
+                <li class="nav-item">
+                    <a class="nav-link" href="@controllers.task.web.routes.CreateTaskController.createTaskForm()">Create New Task</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@controllers.auth.routes.SignOutController.signOut()">SignOut</a>
+                </li>
+            </ul>
+            @b4.inline.form(
+                action = controllers.task.web.routes.ListTasksController.searchTasks(),
+                'class -> "my-2 my-lg-0"
+            ) { implicit vfc =>
+                @b4.search(searchTaskForm("titleIncludes"), 'placeholder -> "search with titles here.", 'class -> "form-control mr-sm-2")
+                @b4.submit('class -> "btn btn-success my-2 my-sm-0"){ Search }
+            }
+        } else {
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="@controllers.auth.routes.SignInController.get()">Sign In</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@controllers.auth.routes.SignUpController.get()">Sign Up</a>
+                </li>
+            </ul>
         }
     </div>
 </nav>

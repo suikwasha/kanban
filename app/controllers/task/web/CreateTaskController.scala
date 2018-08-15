@@ -3,6 +3,7 @@ package controllers.task.web
 import java.time.{LocalDateTime, ZoneId}
 import java.util.Date
 import com.mohiva.play.silhouette.api.Silhouette
+import controllers.NavBar
 import controllers.helpers.RedirectNotSignedInUsers
 import javax.inject.Inject
 import models.silhouette.{User, UserEnv}
@@ -27,14 +28,14 @@ class CreateTaskController @Inject()(
 
   def createTaskForm: Action[AnyContent] = Action.async { implicit request =>
     redirectNotSignedInUsers { _ =>
-      Future.successful(Ok(views.html.task.create(CreateTaskForm.FormInstance, None)))
+      Future.successful(Ok(views.html.task.create(NavBar(showMenu = true), CreateTaskForm.FormInstance, None)))
     }
   }
 
   def createTask: Action[AnyContent] = Action.async { implicit request =>
     redirectNotSignedInUsers { user =>
       CreateTaskForm.FormInstance.bindFromRequest.fold(
-        e => Future.successful(BadRequest(views.html.task.create(e, Some(e.errors.mkString(","))))),
+        e => Future.successful(BadRequest(views.html.task.create(NavBar(showMenu = true), e, Some(e.errors.mkString(","))))),
         createTask(user, _)
       )
     }
