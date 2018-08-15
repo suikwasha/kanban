@@ -28,19 +28,20 @@ class SignInController @Inject()(
   private[this] val logger = LoggerFactory.getLogger(getClass)
 
   def get: Action[AnyContent] = silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
-    Future.successful(Ok(views.html.auth.signin(NavBar(showMenu = false), SignInForm.FormInstance)))
+    Future.successful(Ok(views.html.auth.signin(SignInPage.Default)))
   }
 
   def post: Action[AnyContent] = silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
-    SignInForm.FormInstance.bindFromRequest.fold (
-      err => Future.successful(BadRequest(views.html.auth.signin(NavBar(showMenu = false), err))),
-      signIn
-    )
+    SignInForm.FormInstance.bindFromRequest.fold(badRequest, signIn)
+  }
+
+  private[this] def badRequest(invalidForm: Form[SignInForm])(implicit request: Request[AnyContent]): Future[Result] = {
+    Future.successful(BadRequest(views.html.auth.signin(SignInPage.Default.copy(signInForm = invalidForm))))
   }
 
   private[this] val authenticatorService = silhouette.env.authenticatorService
 
-  private[this] def signIn(signInForm: SignInForm)(implicit request: Request[AnyContent]) = {
+  private[this] def signIn(signInForm: SignInForm)(implicit request: Request[AnyContent]): Future[Result] = {
     (for {
       loginInfo <- credentialsProvider.authenticate(Credentials(signInForm.name, signInForm.password))
       authenticator <- authenticatorService.create(loginInfo)
@@ -59,11 +60,21 @@ class SignInController @Inject()(
 
 object SignInController {
 
+  case class SignInPage(
+    navBar: NavBar,
+    signInForm: Form[SignInForm]
+  )
+
+  object SignInPage {
+
+    val Default = SignInPage(NavBar(showMenu = false), SignInForm.FormInstance))
+  }
+
   case class SignInForm(name: String, password: String)
 
   object SignInForm {
 
-    val FormInstance = Form(
+    val FormInstance: Form[SignInForm] = Form(
       mapping(
         "name" -> nonEmptyText,
         "password" -> nonEmptyText

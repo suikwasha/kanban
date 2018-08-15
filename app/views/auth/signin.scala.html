@@ -1,11 +1,13 @@
 @import controllers.auth.SignInController.SignInForm
+@import controllers.auth.SignInController.SignInPage
 @(
-    navBar: NavBar,
-    signInForm: Form[SignInForm]
+    signInPage: SignInPage
 )(
     implicit request: RequestHeader,
     messagesProvider: MessagesProvider
 )
+@import signInPage.navBar
+@import signInPage.signInForm
 
 @main("Sign In") {
     @nav(navBar)
