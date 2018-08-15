@@ -1,8 +1,7 @@
 package batch.actors
 
-import java.time.Instant
+import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
-import java.util.Date
 import akka.actor.{Actor, Cancellable}
 import batch.notifications.EmailNotificationService
 import models.silhouette.{User, UserRepository}
@@ -49,10 +48,10 @@ class SendingEmailNotificationActor(
   }
 
   private[this] def checkTasks: Unit = {
-    val now = Instant.now
+    val now = LocalDateTime.now
     val tomorrow = now.plus(1, ChronoUnit.DAYS)
     (for {
-      tasks <- taskRepository.find(Date.from(now), Date.from(tomorrow)).map(_.groupBy(_.author))
+      tasks <- taskRepository.find(now, tomorrow).map(_.groupBy(_.author))
       users <- Future.sequence(tasks.keySet.toSeq.map(userRepository.find))
       _ <- Future.sequence(users.flatten.flatMap(u => tasks.get(u.id).map(sendNotification(u, _))))
     } yield {

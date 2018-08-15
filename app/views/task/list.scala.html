@@ -1,5 +1,6 @@
 @import java.text.SimpleDateFormat
 @import controllers.task.web.ListTasksController.ListTasksPage
+@import java.time.format.DateTimeFormatter
 @(
     listTasksPage: ListTasksPage
 )(
@@ -35,7 +36,7 @@
                 </div>
                 <div id="task-@task.id.value-deadline" class="card-footer text-muted text-right">@{
                     task.deadline.map { date =>
-                      s"${new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").format(date)}"
+                      s"${DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm").format(date)}"
                     }.getOrElse("")
                 }</div>
             </div>

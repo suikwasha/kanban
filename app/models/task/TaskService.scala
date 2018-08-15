@@ -1,10 +1,8 @@
 package models.task
 
-import java.util.Date
-
+import java.time.LocalDateTime
 import javax.inject.Inject
 import models.silhouette.UserId
-
 import scala.concurrent.{ExecutionContext, Future}
 
 class TaskService @Inject()(
@@ -23,7 +21,7 @@ class TaskService @Inject()(
     taskRepository.findByTitle(titleIncludes).map(_.filter(_.author == user))
   }
 
-  def createTask(author: UserId, title: String, description: String, deadline: Option[Date]): Future[Task] =
+  def createTask(author: UserId, title: String, description: String, deadline: Option[LocalDateTime]): Future[Task] =
     taskRepository.create(author, title, description, States.InComplete, deadline)
 
   def deleteTask(user: UserId, taskId: TaskId): Future[Boolean] = {
