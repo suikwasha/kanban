@@ -4,11 +4,12 @@ organization := "kanban"
 
 scalaVersion := "2.12.2"
 
-version := "1.0-SNAPSHOT"
+version := "1.0.1"
 
 lazy val root = (project in file("."))
     .enablePlugins(PlayScala)
     .settings(
+      scalacOptions ++= Seq("-target:jvm-1.8"),
       libraryDependencies ++= Seq(
         "net.codingwell" %% "scala-guice" % "4.1.0",
         "com.mohiva" %% "play-silhouette" % "5.0.0-RC2",
