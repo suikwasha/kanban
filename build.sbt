@@ -29,5 +29,6 @@ lazy val root = (project in file("."))
       resolvers ++= Seq(
         Resolver.jcenterRepo,
         "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
-      )
+      ),
+      dockerBaseImage := "openjdk:8u181"
     )
