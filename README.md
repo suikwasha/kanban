@@ -1,5 +1,4 @@
 # kanban
-`http://suikwasha.com:18080`にサンプルがあります
 
 ## 要件
 
